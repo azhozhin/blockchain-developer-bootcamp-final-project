@@ -10,8 +10,9 @@ abstract contract ManufacturerCapability {
         string model;
         string color;
         uint32 year;
-        uint32 maxMilleage;
+        uint32 maxMileage;
         uint32 engineSize;  // volume in cubic centimiters
+        uint256 timestamp;
     }
 
     mapping(uint256 => Vehicle) private _tokenId2Vehicle;
@@ -20,10 +21,10 @@ abstract contract ManufacturerCapability {
     event VehicleManufactured(uint256 token, string vin);
 
     // This function should be called from outside, as it should be connected to minting process
-    function _manufactureVehicle(uint256 tokenId, string memory vin, string memory make, string memory model, string memory color, uint32 year, uint32 maxMilleage, uint32 engineSize) 
+    function _manufactureVehicle(uint256 tokenId, string memory vin, string memory make, string memory model, string memory color, uint32 year, uint32 maxMileage, uint32 engineSize) 
         internal 
     {
-        Vehicle memory vehicle = Vehicle(tokenId, vin, make, model, color, year, maxMilleage, engineSize);
+        Vehicle memory vehicle = Vehicle(tokenId, vin, make, model, color, year, maxMileage, engineSize, block.timestamp);
         _tokenId2Vehicle[tokenId] = vehicle;
         _vin2TokenId[vin] = tokenId;
         emit VehicleManufactured(tokenId, vin);

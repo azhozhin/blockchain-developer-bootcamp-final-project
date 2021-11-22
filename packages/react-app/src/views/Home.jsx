@@ -7,6 +7,7 @@ import axios from "axios";
 import PoliceDepartments from "../components/Parts/PoliceDepartments";
 import Manufacturers from "../components/Parts/Manufacturers";
 import ServiceFactories from "../components/Parts/ServiceFactories";
+import Vehicle from "../components/Parts/Vehicle";
 
 function Home({
   address,
@@ -25,7 +26,7 @@ function Home({
         setRoles({
           isGovernment: newData.isGovernment,
           isManufacturer: newData.isManufacturer,
-          isServiceFactory: newData.isServiceFatory,
+          isServiceFactory: newData.isServiceFactory,
           isPolice: newData.isPolice,
         });
       }
@@ -34,6 +35,8 @@ function Home({
   }, [readContracts, address]);
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 64 }}>
+      <Vehicle readContracts={readContracts} tokenId={1} />
+
       <Manufacturers readContracts={readContracts} roles={roles}/>
       <PoliceDepartments readContracts={readContracts} roles={roles}/>
       <ServiceFactories readContracts={readContracts} roles={roles}/>

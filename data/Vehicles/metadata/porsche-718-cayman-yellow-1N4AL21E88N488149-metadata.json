@@ -21,7 +21,7 @@
       "value": "2021"
     },
     {
-      "attr_type": "max_milleage",
+      "attr_type": "max_mileage",
       "value": "150000"
     },
     {
@@ -31,6 +31,84 @@
     {
       "attr_type": "ipfs_wiki",
       "value": "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Porsche_Boxster_Cayman.html"
+    },
+    {
+      "attr_type": "group",
+      "value": "Power Unit",
+      "attrs": {
+        "Configuration / number of cylinders": "Horizontally opposed 6 cylinder",
+        "Bore": "102.0 mm",
+        "Stroke": "81.5 mm",
+        "Displacement": "3,995 cm³",
+        "Power (kW)": "294 kW",
+        "Power (PS)": "400 PS",
+        "Maximum power at RPM": "7,000 1/min",
+        "Max. torque (Nm) (Manual)": "420 Nm",
+        "Max. torque (Nm) (PDK)": "430 Nm",
+        "Maximum torque at RPM (PDK)": "5,500 1/min",
+        "Maximum torque at RPM range (Manual)": "5,000 - 6,500 1/min"
+      }
+    },
+    {
+      "attr_type": "group",
+      "value": "Performance",
+      "attrs": {
+        "Top speed (Manual)": "182 mph",
+        "Top speed (PDK)": "179 mph",
+        "Acceleration 0-62 mph (0-100 km/h) (Manual)": "4.5 secs",
+        "Acceleration 0-62 mph (0-100 km/h) (PDK)": "4.0 secs",
+        "Flexibility 49-74 mph (80-120 km/h) in 5th gear (Manual)": "6.0 secs",
+        "In-gear acceleration 49-74 mph (80-120 km/h) (PDK)": "2.6 secs"
+      }
+    },
+    {
+      "attr_type": "group",
+      "value": "Body dimensions and weight",
+      "attrs": {
+        "Length": "4,391 mm",
+        "Width (with mirrors folded)": "1,801 mm",
+        "Width (without mirrors folded)": "1,994 mm",
+        "Height": "1,273 mm",
+        "Wheelbase": "2,475 mm",
+        "Unladen weight (DIN) (Manual)": "1,405 kg",
+        "Unladen weight (DIN) (PDK)": "1,435 kg",
+        "Unladen weight (EC) (Manual)": "1,480 kg",
+        "Unladen weight (EC) (PDK)": "1,510 kg",
+        "Permissible gross weight (Manual)": "1,700 kg",
+        "Permissible gross weight (PDK)": "1,730 kg",
+        "Maximum payload": "295 kg"
+      }
+    },
+    {
+      "attr_type": "group",
+      "value": "Capacities",
+      "attrs": {
+        "Luggage compartment volume (front)": "150 litres",
+        "Luggage compartment volume, rear": "120 l",
+        "Luggage compartment volume (Manual)": "120 litres",
+        "Fuel tank": "64 litres"
+      }
+    },
+    {
+      "attr_type": "group",
+      "value": "Service and warranty",
+      "attrs": {
+        "Warranty period": "3 years",
+        "Main service interval": "every 20,000 miles",
+        "Paint warranty period": "3 years",
+        "Corrosion warranty": "12 years"
+      }
+    },
+    {
+      "attr_type": "group",
+      "value": "Consumption",
+      "attrs": {
+        "Fuel consumption combined* (model range) (Manual)": "25.9 - 25.9 mpg",
+        "Fuel consumption combined* (model range) (PDK)": "28.0 - 28.0 mpg",
+        "Emission standard": "Euro 6d-FCM-ISC",
+        "CO2 emissions combined* (model range) (Manual)": "247 - 247 g/km",
+        "CO2 emissions combined* (model range) (PDK)": "230 - 230 g/km"
+      }
     }
-  ],
+  ]
 }

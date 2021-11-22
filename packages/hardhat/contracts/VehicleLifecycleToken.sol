@@ -41,7 +41,7 @@ contract VehicleLifecycleToken is
         selfdestruct(_owner);
     }
 
-    function manufactureVehicle(string memory vin, string memory make, string memory model, string memory color, uint32 year, uint32 maxMilleage, uint32 engineSize, string memory tokenUri) 
+    function manufactureVehicle(string memory vin, string memory make, string memory model, string memory color, uint32 year, uint32 maxMileage, uint32 engineSize, string memory tokenUri) 
       public
       only(MANUFACTURER)
     {
@@ -49,7 +49,7 @@ contract VehicleLifecycleToken is
 
       uint256 tokenId = _tokenIds.current();
       _safeMint(msg.sender, tokenId);
-      _manufactureVehicle(tokenId, vin, make, model, color, year, maxMilleage, engineSize);
+      _manufactureVehicle(tokenId, vin, make, model, color, year, maxMileage, engineSize);
       _setTokenURI(tokenId, tokenUri);
     }
 

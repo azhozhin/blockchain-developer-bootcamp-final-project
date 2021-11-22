@@ -7,6 +7,7 @@ abstract contract PoliceDepartmentCapability is LifecycleAccessControl {
 
     struct PoliceDepartmentLogEntry {
         uint256 timestamp;
+        address principal;
         string recordUri; // to store everything else off-chain
     }
 
@@ -17,7 +18,7 @@ abstract contract PoliceDepartmentCapability is LifecycleAccessControl {
         public 
         only(POLICE) 
     {
-        PoliceDepartmentLogEntry memory logEntry = PoliceDepartmentLogEntry(block.timestamp, recordUri);
+        PoliceDepartmentLogEntry memory logEntry = PoliceDepartmentLogEntry(block.timestamp, msg.sender, recordUri);
         _tokenId2PoliceLogs[tokenId].push(logEntry);
         _tokenId2PoliceCount[tokenId]++;
     }

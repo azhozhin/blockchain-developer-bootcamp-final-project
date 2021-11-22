@@ -12,7 +12,7 @@ export default function PoliceDepartments({
   
     useEffect(() => {
       async function getServiceFactories() {
-        if (readContracts && readContracts.VehicleLifecycleToken){
+        if (roles && readContracts && readContracts.VehicleLifecycleToken){
           const newData = await readContracts.VehicleLifecycleToken.getServiceFactories();
           const list = [];
           const results = [];
@@ -52,7 +52,7 @@ export default function PoliceDepartments({
         }
       }
       getServiceFactories();
-    }, [readContracts]);
+    }, [roles, readContracts]);
     //const data = ;
     //console.log(data);
     const columns = [
@@ -121,9 +121,11 @@ export default function PoliceDepartments({
     ];
     return (
       <div style={{ border: "1px solid #cccccc", padding: 16, width: '100%', margin: "auto", marginTop: 64 }}>
-        <div>
-         <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
-        </div>
+          {data && 
+            <div>
+                <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
+            </div>
+          }
       </div>
     );
   }

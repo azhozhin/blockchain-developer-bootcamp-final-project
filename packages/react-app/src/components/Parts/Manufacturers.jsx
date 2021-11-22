@@ -12,7 +12,7 @@ export default function Manufacturers({
   
     useEffect(() => {
       async function getManufacturers() {
-        if (readContracts && readContracts.VehicleLifecycleToken){
+        if (roles && readContracts && readContracts.VehicleLifecycleToken){
           const newData = await readContracts.VehicleLifecycleToken.getManufacturers();
           const list = [];
           const results = [];
@@ -47,7 +47,7 @@ export default function Manufacturers({
         }
       }
       getManufacturers();
-    }, [readContracts]);
+    }, [roles, readContracts]);
     //const data = ;
     //console.log(data);
     const columns = [
@@ -105,9 +105,11 @@ export default function Manufacturers({
     ];
     return (
       <div style={{ border: "1px solid #cccccc", padding: 16, width: '100%', margin: "auto", marginTop: 64 }}>
-        <div>
-         <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
-        </div>
+            {data && 
+                <div>
+                    <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
+                </div>
+            }
       </div>
     );
   }

@@ -7,6 +7,7 @@ abstract contract ServiceFactoryCapability is LifecycleAccessControl {
 
     struct ServiceFactoryLogEntry {
         uint256 timestamp;
+        address principal;
         uint32 mileage;    // we would store mileage every time vehicle is services
         string recordUri; // to store everything else off-chain
     }
@@ -18,7 +19,7 @@ abstract contract ServiceFactoryCapability is LifecycleAccessControl {
         public 
         only(SERVICE_FACTORY)
     {
-        ServiceFactoryLogEntry memory logEntry = ServiceFactoryLogEntry(block.timestamp, mileage, recordUri);
+        ServiceFactoryLogEntry memory logEntry = ServiceFactoryLogEntry(block.timestamp, msg.sender, mileage, recordUri);
         _tokenId2Logs[tokenId].push(logEntry);
         _tokenId2Count[tokenId]++;
     }
