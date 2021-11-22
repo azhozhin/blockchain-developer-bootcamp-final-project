@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Address } from "..";
 import { Table, Switch, Image } from "antd";
 import axios from "axios";
+import EntityState from "../EntityState";
 
 export default function PoliceDepartments({
     readContracts,
+    roles,
   }) {
     const [data, setData] = useState();
   
@@ -45,7 +47,6 @@ export default function PoliceDepartments({
                 });
               })
               setData(dt);
-              console.log(dt);
             });
           
         }
@@ -97,7 +98,7 @@ export default function PoliceDepartments({
         key: 'state',
         width: '100px',
         render: state => 
-          <Switch checkedChildren="ACTIVE" unCheckedChildren="SUSPENDED" checked={state} />
+        <EntityState state={state} allowed={roles.isGovernment}/>
       },
       {
         title: 'Addr',
@@ -121,7 +122,7 @@ export default function PoliceDepartments({
     return (
       <div style={{ border: "1px solid #cccccc", padding: 16, width: '100%', margin: "auto", marginTop: 64 }}>
         <div>
-         <Table rowKey={record => record.address} dataSource={data} columns={columns} />
+         <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
         </div>
       </div>
     );

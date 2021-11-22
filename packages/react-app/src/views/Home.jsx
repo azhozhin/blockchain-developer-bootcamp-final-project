@@ -16,12 +16,27 @@ function Home({
   readContracts,
   writeContracts,
 }) {
- 
+  const [roles, setRoles] = useState();
+  useEffect(() => {
+    async function getRoles() {
+      if (address && readContracts && readContracts.VehicleLifecycleToken){
+        const newData = await readContracts.VehicleLifecycleToken.getRoles(address);
+        console.log(newData);
+        setRoles({
+          isGovernment: newData.isGovernment,
+          isManufacturer: newData.isManufacturer,
+          isServiceFactory: newData.isServiceFatory,
+          isPolice: newData.isPolice,
+        });
+      }
+    }
+    getRoles();
+  }, [readContracts, address]);
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 64 }}>
-      <Manufacturers readContracts={readContracts}/>
-      <PoliceDepartments readContracts={readContracts}/>
-      <ServiceFactories readContracts={readContracts}/>
+      <Manufacturers readContracts={readContracts} roles={roles}/>
+      <PoliceDepartments readContracts={readContracts} roles={roles}/>
+      <ServiceFactories readContracts={readContracts} roles={roles}/>
     </div>
   );
 }

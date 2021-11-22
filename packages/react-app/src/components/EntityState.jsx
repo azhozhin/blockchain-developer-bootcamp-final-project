@@ -1,20 +1,10 @@
 import React from "react";
+import { Switch } from "antd";
 
 // displays a page header
 
 export default function EntityState(props) {
-  let text;
-  switch(props.state){
-    case 0:
-      text = "SUSPENDED";
-      break;
-    case 1: 
-      text = "ACTIVE";
-      break;
-    default:
-      throw "Unexpected state: "+props.state;
-  }
   return (
-    <span>{text}</span>
+    <Switch checkedChildren="ON" unCheckedChildren="OFF" checked={props.state} disabled={!props.allowed} style={{width: '60px' }}/>
   );
 }
