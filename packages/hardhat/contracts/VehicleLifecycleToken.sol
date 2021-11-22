@@ -86,4 +86,3 @@ contract VehicleLifecycleToken is
     //     ERC721URIStorage._burn(tokenId);
     // }
 }
-

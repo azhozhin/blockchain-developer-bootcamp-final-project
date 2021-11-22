@@ -1,0 +1,36 @@
+{
+  "name": "Porsche 718 Cayman",
+  "image": "https://ipfs.io/ipfs/QmbHUtvfS4NCiCqvT77yNCgfBFu8Awcf36pVUxyybgcXwP",
+  "description": "Porsche 718 Cayman",
+  "external_uri": "https://www.porsche.com/uk/models/718/718-models/718-cayman/",
+  "attributes": [
+    {
+      "attr_type": "make",
+      "value": "Porsche"
+    },
+    {
+      "attr_type": "model",
+      "value": "718 Cayman"
+    },
+    {
+      "attr_type": "color",
+      "value": "yellow"
+    },
+    {
+      "attr_type": "year",
+      "value": "2021"
+    },
+    {
+      "attr_type": "max_milleage",
+      "value": "150000"
+    },
+    {
+      "attr_type": "engine_size",
+      "value": "2000"
+    },
+    {
+      "attr_type": "ipfs_wiki",
+      "value": "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Porsche_Boxster_Cayman.html"
+    }
+  ],
+}

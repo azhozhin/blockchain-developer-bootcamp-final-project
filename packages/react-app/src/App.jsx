@@ -311,7 +311,13 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             {/* pass in any web3 props to this Home component */}
-            <Home />
+            <Home 
+              address={address}
+              localProvider={localProvider}
+              mainnetProvider={mainnetProvider}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}/>
           </Route>
           <Route exact path="/debug">
             {/*
