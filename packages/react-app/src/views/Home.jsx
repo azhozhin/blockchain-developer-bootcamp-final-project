@@ -37,7 +37,7 @@ function Home({
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 64 }}>
       <Vehicle readContracts={readContracts} tokenId={1} />
 
-      <Manufacturers readContracts={readContracts} roles={roles}/>
+      <Manufacturers readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles}/>
       <PoliceDepartments readContracts={readContracts} roles={roles}/>
       <ServiceFactories readContracts={readContracts} roles={roles}/>
     </div>

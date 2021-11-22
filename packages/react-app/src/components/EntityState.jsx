@@ -5,6 +5,12 @@ import { Switch } from "antd";
 
 export default function EntityState(props) {
   return (
-    <Switch checkedChildren="ON" unCheckedChildren="OFF" checked={props.state} disabled={!props.allowed} style={{width: '60px' }}/>
+    <Switch 
+      checkedChildren="ON" 
+      unCheckedChildren="OFF" 
+      checked={props.state} 
+      disabled={!props.allowed} 
+      onChange={props.onChange}
+      style={{width: '60px' }}/>
   );
 }

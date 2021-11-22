@@ -6,7 +6,9 @@ import EntityState from "../EntityState";
 
 export default function Manufacturers({
     readContracts,
+    writeContracts,
     roles,
+    tx,
   }) {
     const [data, setData] = useState();
   
@@ -47,7 +49,7 @@ export default function Manufacturers({
         }
       }
       getManufacturers();
-    }, [roles, readContracts]);
+    }, [tx, roles, readContracts, writeContracts]);
     //const data = ;
     //console.log(data);
     const columns = [
@@ -81,8 +83,22 @@ export default function Manufacturers({
         dataIndex: 'state',
         key: 'state',
         width: '100px',
-        render: state => 
-          <EntityState state={state} allowed={roles.isGovernment}/>
+        render: (state, record) => 
+          <EntityState state={state} allowed={roles.isGovernment} onChange={async () => {
+            /* look how you call setPurpose on your contract: */
+            /* notice how you pass a call back for tx updates too */
+            const fun = (record.state == 1) 
+                ? writeContracts.VehicleLifecycleToken.disable(1, record.addr)
+                : writeContracts.VehicleLifecycleToken.enable(1, record.addr);
+            const result = tx(fun, update => {
+              console.log("📡 Transaction Update:", update);
+              if (update && (update.status === "confirmed" || update.status === 1)) {
+                console.log("Transaction " + update.hash + " finished!");
+              }
+            });
+            console.log("awaiting metamask/web3 confirm result...", result);
+            console.log(await result);
+          }}/>
       },
       {
         title: 'Addr',
