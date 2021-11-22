@@ -1,0 +1,20 @@
+{
+  "name": "New York City Police Department",
+  "image": "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/m/Patch_of_the_New_York_City_Police_Department.svg.png",
+  "description": "The New York City Police Department (NYPD or NYCPD), officially the City of New York Police Department, is the largest municipal police force in the United States.",
+  "external_uri": "https://www1.nyc.gov/site/nypd/index.page",
+  "attributes": [
+    {
+      "attr_type": "address_line",
+      "value": "1 Police Plaza Path, New York"
+    },
+    {
+      "attr_type": "postal_code",
+      "value": "NY 10038"
+    },
+    {
+      "attr_type": "country",
+      "value": "United States"
+    }   
+  ]
+}

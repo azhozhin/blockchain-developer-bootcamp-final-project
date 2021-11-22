@@ -18,6 +18,45 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // Getting a previously deployed contract
   const vehicleLifecycleToken = await ethers.getContract("VehicleLifecycleToken", deployer);
+  await vehicleLifecycleToken.setAdminRole(deployer);
+
+  // Manufacturers
+  await vehicleLifecycleToken.add(
+    1,
+    "0xDE740E368128Ece3e604dC9db747679A469f0Dd3", 
+    "Porsche",
+    "https://gateway.pinata.cloud/ipfs/QmRPjEtKnH56T3Khdq4YP6sWWEzHAfWXbnpS4Y9Qz6embE");
+  await vehicleLifecycleToken.add(
+    1,
+    "0xb67EDD32D46ceD740b0F45ccD8408fa87FFA9C05", 
+    "Kia",
+    "https://gateway.pinata.cloud/ipfs/QmWYVZj53Gyepykg8FQN6i5WHuv1dq8NWKnSefTFkVn77U");
+
+  // Service factories
+  await vehicleLifecycleToken.add(
+    2,
+    "0x3B81e758Bd8163f5db425e7Fba402E18FCc8958D", 
+    "Plaza Kia",
+    "https://gateway.pinata.cloud/ipfs/QmUzD5MAFYU2LDKSQN5kiTH5xcM2aGLiK4TdS1rFYPcyKv");
+  await vehicleLifecycleToken.add(
+    2,
+    "0x44d5Fb46BcA0bB486836789c40838bd5404834AB",
+    "Manhattan Motorcars",
+    "https://gateway.pinata.cloud/ipfs/QmWrdYxiA4LkiEuMFdhPy3pUBDHaqQJkFKe152XhVNHrsT");
+
+  // Police Departments
+  await vehicleLifecycleToken.add(
+    3,
+    "0x332b3E20452bD9d89Cf89473111BeA0c052E651a", 
+    "New York City Police Department", 
+    "https://gateway.pinata.cloud/ipfs/QmUyKBosqz2dzynvCP1qxa4rZrFgf1Z5dCbC7ozJpPrKUE");
+  await vehicleLifecycleToken.add(
+    3,
+    "0x7b25648f9C5aDF7A887Ac451A69F137cde90916E", 
+    "Metropolitan Police Department of the District of Columbia", 
+    "https://gateway.pinata.cloud/ipfs/QmYy3UjFmCWbgPHvQT2Sxq8BDRynddGFhPc9wtvsHs7vJk");
+    
+
   await vehicleLifecycleToken.setAdminRole("0x06199F0B1312DDAD50daCD024a52323c3ff91312");
   await vehicleLifecycleToken.transferOwnership("0x06199F0B1312DDAD50daCD024a52323c3ff91312");
   
@@ -56,12 +95,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // Verify your contracts with Etherscan
   // You don't want to verify on localhost
-  if (chainId !== localChainId) {
+  /*if (chainId !== localChainId) {
     await run("verify:verify", {
       address: YourContract.address,
-      contract: "contracts/YourContract.sol:YourContract",
+      contract: "contracts/VehicleLifecycleToken.sol:VehicleLifecycleToken",
       contractArguments: [],
     });
-  }
+  }*/
 };
-module.exports.tags = ["YourContract"];
+module.exports.tags = ["VehicleLifecycleToken"];

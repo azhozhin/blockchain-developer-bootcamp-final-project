@@ -30,7 +30,7 @@ const { utils } = require("ethers");
 */
 
 export default function Balance(props) {
-  const [dollarMode, setDollarMode] = useState(true);
+  const [dollarMode, setDollarMode] = useState(false);
 
   const balance = useBalance(props.provider, props.address);
   let floatBalance = parseFloat("0.00");
@@ -44,28 +44,25 @@ export default function Balance(props) {
     parseFloat(etherBalance).toFixed(2);
     floatBalance = parseFloat(etherBalance);
   }
-
-  let displayBalance = floatBalance.toFixed(4);
-
+  
   const price = props.price || props.dollarMultiplier || 1;
+  let displayEthBalance = floatBalance.toFixed(4);
+  let displayUsdBalance = (floatBalance * price).toFixed(2);
 
-  if (dollarMode) {
-    displayBalance = "$" + (floatBalance * price).toFixed(2);
-  }
-
-  return (
+    return (
     <span
       style={{
         verticalAlign: "middle",
-        fontSize: props.size ? props.size : 24,
+        fontSize: props.size ? props.size : 12,
         padding: 8,
-        cursor: "pointer",
+        //cursor: "pointer",
       }}
       onClick={() => {
-        setDollarMode(!dollarMode);
+        //setDollarMode(!dollarMode);
       }}
     >
-      {displayBalance}
+      <span style={{marginRight:2}}>Ξ</span>{displayEthBalance} /&nbsp;  
+      <span style={{marginRight:2}}>$</span>{displayUsdBalance}
     </span>
   );
 }

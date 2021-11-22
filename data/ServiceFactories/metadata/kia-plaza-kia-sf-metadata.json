@@ -1,0 +1,20 @@
+{
+  "name": "Kia Plaza",
+  "image": "https://ipfs.io/ipfs/QmVDVLWoSfZYGEwwQYUbHcUmyKXZofaXMm66dyAFmx6azo",
+  "description": "For decades, drivers from all over Brooklyn, Queens, Bay Ridge, Staten Island, Manhattan, Bronx, Nassau County, and the surrounding New York areas have been visiting Plaza Kia to find great deals on new Kia models, certified pre-owned, and used cars from many different automakers",
+  "external_uri": "https://www.plazakiany.com/",
+  "attributes": [
+    {
+      "attr_type": "address_line",
+      "value": " 2748 Nostrand Ave, Brooklyn"
+    },
+    {
+      "attr_type": "postal_code",
+      "value": "NY 11210"
+    },
+    {
+      "attr_type": "country",
+      "value": "United States"
+    }   
+  ]
+}

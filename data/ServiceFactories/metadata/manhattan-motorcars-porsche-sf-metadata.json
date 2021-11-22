@@ -1,0 +1,20 @@
+{
+  "name": "Manhattan Motorcars",
+  "image": "https://ipfs.io/ipfs/Qme7gGfHBy2A1TV7vXiwRJqS9VPxCYxEt2uMctPNctDz4w",
+  "description": "Manhattan Motorcars is a certified Porsche dealer serving drivers throughout New York and the surrounding areas",
+  "external_uri": "https://www.manhattanmotorcarsporsche.com/",
+  "attributes": [
+    {
+      "attr_type": "address_line",
+      "value": "711 Eleventh Ave, New York"
+    },
+    {
+      "attr_type": "postal_code",
+      "value": "NY 10019"
+    },
+    {
+      "attr_type": "country",
+      "value": "United States"
+    }   
+  ]
+}

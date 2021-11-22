@@ -1,0 +1,20 @@
+{
+  "name": "Metropolitan Police Department of the District of Columbia",
+  "image": "https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/m/Patch_of_the_Metropolitan_Police_Department_of_the_District_of_Columbia.svg.png",
+  "description": "The Metropolitan Police Department of the District of Columbia (MPDC), more commonly known as the Metropolitan Police Department (MPD) and the DC Police, is the primary law enforcement agency for the District of Columbia, in the United States.",
+  "external_uri": "https://mpdc.dc.gov/",
+  "attributes": [
+    {
+      "attr_type": "address_line",
+      "value": "441 4th Street, NW, 7th Floor, Washington"
+    },
+    {
+      "attr_type": "postal_code",
+      "value": "DC 20001"
+    },
+    {
+      "attr_type": "country",
+      "value": "United States"
+    }
+  ]
+}

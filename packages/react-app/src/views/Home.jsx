@@ -14,10 +14,6 @@ function Home(params) {
           packages/react-app/views/Home.jsx
         </span>
       </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>💭</span>
-        OR Check out <Link to="/hints">Hints Tab</Link>
-      </div>
     </div>
   );
 }

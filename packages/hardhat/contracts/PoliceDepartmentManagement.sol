@@ -1,42 +1,64 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./LifecycleAccessControl.sol";
+import './EntityManagement.sol';
 
-abstract contract PoliceDepartmentManagement {
+abstract contract PoliceDepartmentManagement is EntityManagement{
 
-    struct PoliceDepartment {
-        address addr;
-        string name;
-        string metadataUri; // everything else is off-chain
-    }
-
-    mapping(address => PoliceDepartment) private _policeDepartments;
+    mapping(address => Entity) private _policeDepartments;
     mapping(uint256 => address) private _policeDepartment2Address;
     uint256 public policeDepartmentCount;
 
-    event PoliceDepartmentAdded(address addr, string name);
-    event PoliceDepartmentSuspended(address addr);
-    event PoliceDepartmentResumed(address addr);
+    function _addPoliceDepartment(
+        address addr,
+        string memory name,
+        string memory metadataUri
+    ) internal {
+        policeDepartmentCount = _addEntity(
+            EntityType.MANUFACTURER,
+            _policeDepartments,
+            _policeDepartment2Address,
+            policeDepartmentCount,
+            addr,
+            name,
+            metadataUri
+        );
+    }
 
-    function _addPoliceDepartment(address addr, string memory name, string memory metadataUri)
-        internal
+    function _updatePoliceDepartment(address addr, string memory metadataUri) 
+        internal 
+        exists(_policeDepartments, addr) 
     {
-        _policeDepartments[addr] = PoliceDepartment(addr, name, metadataUri);
-        policeDepartmentCount++;
+        _updateEntity(EntityType.POLICE, _policeDepartments, addr, metadataUri);
     }
 
-    function getPoliceDepartment(address addr) public view returns (PoliceDepartment memory) {
-        PoliceDepartment memory policeDepartment = _policeDepartments[addr];
-        require(policeDepartment.addr != address(0), "PoliceDepartment does not exist");
-        return policeDepartment;
+    function _suspendPoliceDepartment(address addr)
+        internal
+        exists(_policeDepartments, addr) 
+    {
+        _suspendEntity(EntityType.POLICE, _policeDepartments, addr);
     }
 
-    function getPoliceDepartments() public view returns (PoliceDepartment[] memory){
-        PoliceDepartment[] memory result = new PoliceDepartment[](policeDepartmentCount);
-        for (uint i=0; i<policeDepartmentCount; i++){
-            result[i] = _policeDepartments[_policeDepartment2Address[i]];
-        }
-        return result;
+    function _resumePoliceDepartment(address addr)
+        internal
+        exists(_policeDepartments, addr) 
+    {
+        _resumeEntity(EntityType.POLICE, _policeDepartments, addr);
+    }
+
+    function getPoliceDepartment(address addr)
+        public
+        view
+        returns (Entity memory)
+    {
+        return _getEntity(_policeDepartments, addr);
+    }
+
+    function getPoliceDepartments()
+        public
+        view
+        returns (Entity[] memory)
+    {
+        return _getEntities(_policeDepartments, _policeDepartment2Address, policeDepartmentCount);
     }
 }
