@@ -4,9 +4,11 @@ import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
 import { entityType, getToggleEntityMethod, executeToggleEntityMethod } from "../../helpers/entityHelper";
+import AddPoliceDepartmentForm from "./AddPoliceDepartmentForm";
 
 export default function PoliceDepartments({ readContracts, writeContracts, tx, roles }) {
   const [data, setData] = useState();
+  const [visible, setVisible] = useState(false);  
 
   useEffect(() => {
     async function getPoliceDepartments() {
@@ -49,8 +51,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
     }
     getPoliceDepartments();
   }, [tx, roles, readContracts, writeContracts]);
-  //const data = ;
-  //console.log(data);
+  
   const columns = [
     {
       title: "Logo",
@@ -122,6 +123,11 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
       ),
     },
   ];
+
+  const showAddPoliceDepartmentForm = ()=>{
+      setVisible(true);
+  }
+
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: "100%", margin: "auto", marginTop: 64 }}>
       {data && (
@@ -129,9 +135,11 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
         </div>
       )}
-      <Button type="primary" disabled={!roles.isGovernment}>
+      <Button type="primary" disabled={!roles.isGovernment} onClick={showAddPoliceDepartmentForm}>
         Add Police Department
       </Button>
+      <AddPoliceDepartmentForm 
+        visible={visible} />
     </div>
   );
 }
