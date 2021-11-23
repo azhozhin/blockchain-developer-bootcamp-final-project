@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Events, Address } from "../components";
-import { Table, Switch, Image } from "antd";
+import { Table, Switch, Image, Tabs } from "antd";
 import EntityState from "../components/EntityState";
 import axios from "axios";
 import PoliceDepartments from "../components/Parts/PoliceDepartments";
 import Manufacturers from "../components/Parts/Manufacturers";
 import ServiceFactories from "../components/Parts/ServiceFactories";
-import Vehicle from "../components/Parts/Vehicle";
+import VehicleDetails from "../components/Parts/VehicleDetails";
+import VehicleSearch from "../components/Parts/VehicleSearch";
 
-function Home({
+const { TabPane } = Tabs;
+
+export default function Home({
   address,
   localProvider,
   mainnetProvider,
@@ -18,11 +21,13 @@ function Home({
   writeContracts,
 }) {
   const [roles, setRoles] = useState();
+  const [tokenId, setTokenId] = useState("");
+  const [activeTab, setActiveTab] = useState("search");
+
   useEffect(() => {
     async function getRoles() {
-      if (address && readContracts && readContracts.VehicleLifecycleToken){
+      if (address && readContracts && readContracts.VehicleLifecycleToken) {
         const newData = await readContracts.VehicleLifecycleToken.getRoles(address);
-        console.log(newData);
         setRoles({
           isGovernment: newData.isGovernment,
           isManufacturer: newData.isManufacturer,
@@ -33,15 +38,56 @@ function Home({
     }
     getRoles();
   }, [readContracts, address]);
-  return (
-    <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 64 }}>
-      <Vehicle readContracts={readContracts} tokenId={1} />
 
-      <Manufacturers readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles}/>
-      <PoliceDepartments readContracts={readContracts} roles={roles}/>
-      <ServiceFactories readContracts={readContracts} roles={roles}/>
+  const handleChange = (newTokenId) => {
+    if (newTokenId) {
+      setTokenId(newTokenId);
+      setActiveTab("vehicle");
+    } else {
+      setTokenId(undefined);
+    }
+  }
+
+  const onTabChange = (newActiveTab) => {
+    setActiveTab(newActiveTab);
+  }
+
+  return (
+    <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 25 }}>
+      <Tabs activeKey={activeTab} type="card" onChange={onTabChange}>
+        <TabPane tab="Search" key="search">
+          <VehicleSearch readContracts={readContracts} handleChange={handleChange} />
+        </TabPane>
+        <TabPane tab="Vehicle" key="vehicle">
+          <VehicleDetails
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tokenId={tokenId}
+            roles={roles} />
+        </TabPane>
+        <TabPane tab="Manufacturers" key="manufacturers">
+          <Manufacturers
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tx={tx}
+            roles={roles} />
+        </TabPane>
+        <TabPane tab="Service Factories" key="serviceFactories">
+          <ServiceFactories
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tx={tx}
+            roles={roles} />
+        </TabPane>
+        <TabPane tab="Police Departments" key="policeDepartments">
+          <PoliceDepartments
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tx={tx}
+            roles={roles} />
+        </TabPane>
+      </Tabs>
     </div>
   );
 }
 
-export default Home;

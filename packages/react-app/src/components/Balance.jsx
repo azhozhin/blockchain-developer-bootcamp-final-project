@@ -44,12 +44,12 @@ export default function Balance(props) {
     parseFloat(etherBalance).toFixed(2);
     floatBalance = parseFloat(etherBalance);
   }
-  
+
   const price = props.price || props.dollarMultiplier || 1;
   let displayEthBalance = floatBalance.toFixed(4);
   let displayUsdBalance = (floatBalance * price).toFixed(2);
 
-    return (
+  return (
     <span
       style={{
         verticalAlign: "middle",
@@ -61,8 +61,10 @@ export default function Balance(props) {
         //setDollarMode(!dollarMode);
       }}
     >
-      <span style={{marginRight:2}}>Ξ</span>{displayEthBalance} /&nbsp;  
-      <span style={{marginRight:2}}>$</span>{displayUsdBalance}
+      <span style={{ marginRight: 2 }}>Ξ</span>
+      {displayEthBalance} /&nbsp;
+      <span style={{ marginRight: 2 }}>$</span>
+      {displayUsdBalance}
     </span>
   );
 }

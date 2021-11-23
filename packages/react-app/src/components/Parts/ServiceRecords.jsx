@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import React from "react";
 
-export default function ServiceRecords({logs}){
+export default function ServiceRecords({ logs }) {
     // timestamp: timestamp,
     //                 principal: "TBD",
     //                 mileage: mileage,
@@ -12,10 +12,10 @@ export default function ServiceRecords({logs}){
             title: 'Timestamp',
             dataIndex: 'timestamp',
             key: 'timestamp',
-            render: (timestamp, record)=>
-            <div>
-                {record.record.datetime}
-            </div>
+            render: (timestamp, record) =>
+                <div>
+                    {record.record.datetime}
+                </div>
         },
         {
             title: 'Mileage',
@@ -31,16 +31,20 @@ export default function ServiceRecords({logs}){
             title: 'Record',
             dataIndex: 'record',
             key: 'record',
-            render: (record)=>
-            <div>
-                {record.summary}
-            </div>
+            render: (record) =>
+                <div>
+                    {record.summary}
+                </div>
         },
     ];
     return (
         <div>
-            <Table rowKey={record => record.timestamp} dataSource={logs} columns={columns} pagination={false} />
+            <Table
+                rowKey={record => record.timestamp}
+                dataSource={logs}
+                columns={columns}
+                pagination={false} />
         </div>
     );
-    
+
 }

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Address } from "..";
-import { Table, Switch, Image } from "antd";
+import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
+import { entityType, getToggleEntityMethod, executeToggleEntityMethod } from "../../helpers/entityHelper";
 
 export default function PoliceDepartments({
     readContracts,
+    writeContracts,
+    tx,
     roles,
   }) {
     const [data, setData] = useState();
@@ -52,7 +55,7 @@ export default function PoliceDepartments({
         }
       }
       getPoliceDepartments();
-    }, [roles, readContracts]);
+    }, [tx, roles, readContracts, writeContracts]);
     //const data = ;
     //console.log(data);
     const columns = [
@@ -98,7 +101,10 @@ export default function PoliceDepartments({
         key: 'state',
         width: '100px',
         render: state => 
-        <EntityState state={state} allowed={roles && roles.isGovernment}/>
+        <EntityState state={state} allowed={roles && roles.isGovernment} onChange={async () => {
+          const fun = getToggleEntityMethod(writeContracts, entityType.POLICE, record.state, record.addr);
+          const result = await executeToggleEntityMethod(tx, fun);
+        }}/>
       },
       {
         title: 'Addr',
@@ -126,6 +132,7 @@ export default function PoliceDepartments({
                 <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
             </div>
           }
+          <Button type="primary" disabled={!roles.isGovernment}>Add Police Department</Button>
       </div>
     );
   }
