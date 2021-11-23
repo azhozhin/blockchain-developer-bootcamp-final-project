@@ -6,11 +6,7 @@ import React from "react";
 export default function Header() {
   return (
     <a href="/" target="_blank" rel="noopener noreferrer">
-      <PageHeader
-        title="Vehicle Lifecycle Token"
-        subTitle=""
-        style={{ cursor: "pointer" }}
-      />
+      <PageHeader title="Vehicle Lifecycle Token" subTitle="" style={{ cursor: "pointer" }} />
     </a>
   );
 }

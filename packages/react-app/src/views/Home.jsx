@@ -12,14 +12,7 @@ import VehicleSearch from "../components/Parts/VehicleSearch";
 
 const { TabPane } = Tabs;
 
-export default function Home({
-  address,
-  localProvider,
-  mainnetProvider,
-  tx,
-  readContracts,
-  writeContracts,
-}) {
+export default function Home({ address, localProvider, mainnetProvider, tx, readContracts, writeContracts }) {
   const [roles, setRoles] = useState();
   const [tokenId, setTokenId] = useState("");
   const [activeTab, setActiveTab] = useState("search");
@@ -39,18 +32,18 @@ export default function Home({
     getRoles();
   }, [readContracts, address]);
 
-  const handleChange = (newTokenId) => {
+  const handleChange = newTokenId => {
     if (newTokenId) {
       setTokenId(newTokenId);
       setActiveTab("vehicle");
     } else {
       setTokenId(undefined);
     }
-  }
+  };
 
-  const onTabChange = (newActiveTab) => {
+  const onTabChange = newActiveTab => {
     setActiveTab(newActiveTab);
-  }
+  };
 
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 25 }}>
@@ -63,31 +56,19 @@ export default function Home({
             readContracts={readContracts}
             writeContracts={writeContracts}
             tokenId={tokenId}
-            roles={roles} />
+            roles={roles}
+          />
         </TabPane>
         <TabPane tab="Manufacturers" key="manufacturers">
-          <Manufacturers
-            readContracts={readContracts}
-            writeContracts={writeContracts}
-            tx={tx}
-            roles={roles} />
+          <Manufacturers readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles} />
         </TabPane>
         <TabPane tab="Service Factories" key="serviceFactories">
-          <ServiceFactories
-            readContracts={readContracts}
-            writeContracts={writeContracts}
-            tx={tx}
-            roles={roles} />
+          <ServiceFactories readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles} />
         </TabPane>
         <TabPane tab="Police Departments" key="policeDepartments">
-          <PoliceDepartments
-            readContracts={readContracts}
-            writeContracts={writeContracts}
-            tx={tx}
-            roles={roles} />
+          <PoliceDepartments readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles} />
         </TabPane>
       </Tabs>
     </div>
   );
 }
-
