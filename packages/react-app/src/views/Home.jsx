@@ -12,7 +12,15 @@ import VehicleSearch from "../components/Parts/VehicleSearch";
 
 const { TabPane } = Tabs;
 
-export default function Home({ address, localProvider, mainnetProvider, tx, readContracts, writeContracts }) {
+export default function Home({
+  address,
+  localProvider,
+  mainnetProvider,
+  tx,
+  readContracts,
+  writeContracts,
+  pinataApi,
+}) {
   const [roles, setRoles] = useState();
   const [tokenId, setTokenId] = useState("");
   const [activeTab, setActiveTab] = useState("search");
@@ -60,13 +68,31 @@ export default function Home({ address, localProvider, mainnetProvider, tx, read
           />
         </TabPane>
         <TabPane tab="Manufacturers" key="manufacturers">
-          <Manufacturers readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles} />
+          <Manufacturers
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tx={tx}
+            roles={roles}
+            pinataApi={pinataApi}
+          />
         </TabPane>
         <TabPane tab="Service Factories" key="serviceFactories">
-          <ServiceFactories readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles} />
+          <ServiceFactories
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tx={tx}
+            roles={roles}
+            pinataApi={pinataApi}
+          />
         </TabPane>
         <TabPane tab="Police Departments" key="policeDepartments">
-          <PoliceDepartments readContracts={readContracts} writeContracts={writeContracts} tx={tx} roles={roles} />
+          <PoliceDepartments
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            tx={tx}
+            roles={roles}
+            pinataApi={pinataApi}
+          />
         </TabPane>
       </Tabs>
     </div>

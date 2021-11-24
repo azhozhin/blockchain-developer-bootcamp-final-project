@@ -20,6 +20,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const vehicleLifecycleToken = await ethers.getContract("VehicleLifecycleToken", deployer);
   await vehicleLifecycleToken.setAdminRole(deployer);
 
+  // 
+
   // Manufacturers
   await vehicleLifecycleToken.add(
     1,

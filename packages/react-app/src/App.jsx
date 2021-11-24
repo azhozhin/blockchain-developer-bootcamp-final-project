@@ -79,6 +79,10 @@ function App(props) {
   const [route, setRoute] = useState();
   const [address, setAddress] = useState();
 
+  const pinataApi = {
+    key: process.env.REACT_APP_PINATA_API_KEY,
+    secret: process.env.REACT_APP_PINATA_API_SECRET,
+  };
   // load all your providers
   const localProvider = useStaticJsonRPC([
     process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : targetNetwork.rpcUrl,
@@ -318,6 +322,7 @@ function App(props) {
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
+              pinataApi={pinataApi}
             />
           </Route>
           <Route exact path="/debug">

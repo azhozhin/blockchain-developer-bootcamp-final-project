@@ -5,6 +5,8 @@ import ImgCrop from "antd-img-crop";
 
 import { pinFileToIpfs, pinJsonToIpfs } from "../../helpers/ipfsHelper";
 import { AddressInput } from "..";
+import faker from "faker";
+import { fake } from "faker/locale/zh_TW";
 
 const incidents = [
   "hit road divider",
@@ -14,38 +16,26 @@ const incidents = [
   "hit animal crossing the road",
 ];
 
-export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDetails, writeContracts }) {
+export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDetails, writeContracts, pinataApi }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [fileList, setFileList] = useState([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ]);
+  const [fileList, setFileList] = useState([]);
   const [progress, setProgress] = useState(0);
 
   const handleOk = async () => {
     setConfirmLoading(true);
     const fields = form.getFieldsValue();
     const obj = {
-      vin: fields.vin,
-      vehicle: fields.vehicle,
-      color: fields.color,
-      year: fields.year,
-      datetime: fields.datetime.format("YYYY-MM-DD HH:mm:ss"),
-      summary: fields.summary,
-      details: fields.details,
+      name: fields.name,
+      description: fields.description,
+      externalUri: fields.externalUri,
+      addressLine: fields.addressLine,
+      postalCode: fields.postalCode,
+      country: fields.country,
+      addr: fields.addr,
     };
     const name = "policeRecord-" + fields.vin;
-    const data = await pinJsonToIpfs(
-      obj,
-      name,
-      "d91c1c142f067b652a0c",
-      "868e2bdeebb78dd531969872283050ceeda15a72f78cef991150dac03daac740",
-    );
+    const data = await pinJsonToIpfs(obj, name, pinataApi.key, pinataApi.secret);
     const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
     try {
       const tokenId = BigInt(vehicleDetails.tokenId);
@@ -64,11 +54,14 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
 
   const onFill = () => {
     const rndIdx = Math.floor(Math.random() * incidents.length);
+    const cityName = faker.address.cityName();
     form.setFieldsValue({
-      vin: vehicleDetails.vin,
-      datetime: moment(new Date()).set({ hours: 0, minutes: 0, seconds: 0 }),
-      summary: "The car " + incidents[rndIdx],
-      details: "Incident Details would go here",
+      name: cityName + " Police Department",
+      description: "",
+      externalUri: faker.internet.url(),
+      addressLine: faker.address.streetAddress() + ", " + cityName,
+      postalCode: faker.address.zipCode(),
+      country: "United States",
     });
   };
 
@@ -77,7 +70,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
   };
 
   const onPreview = async file => {
-    let src = file.url;
+    let src = file.originFileObj.url;
     if (!src) {
       src = await new Promise(resolve => {
         const reader = new FileReader();
@@ -96,14 +89,14 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
     const data = await pinFileToIpfs(
       file,
       "policeDepartment-" + 1,
-      "d91c1c142f067b652a0c",
-      "868e2bdeebb78dd531969872283050ceeda15a72f78cef991150dac03daac740",
+      pinataApi.key,
+      pinataApi.secret,
       setProgress,
       onSuccess,
       onError,
-      onProgress
+      onProgress,
     );
-    file.url = "https://ipfs.io/ipfs/"+data.IpfsHash;
+    file.url = "https://ipfs.io/ipfs/" + data.IpfsHash;
   };
 
   useEffect(() => {
@@ -157,7 +150,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
         <Form.Item name="addressLine" label="Address" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="postalCode" label="Post Code" rules={[{ required: true }]}>
+        <Form.Item name="postalCode" label="PostCode" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
         <Form.Item name="country" label="Country" rules={[{ required: true }]}>
