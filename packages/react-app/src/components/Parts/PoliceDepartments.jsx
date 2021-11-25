@@ -3,16 +3,23 @@ import { Address } from "..";
 import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
-import { entityType, getToggleEntityMethod, executeToggleEntityMethod } from "../../helpers/entityHelper";
+import { entityType, getToggleEntityMethod, executeMethod } from "../../helpers/entityHelper";
 import AddPoliceDepartmentForm from "./AddPoliceDepartmentForm";
 
 export default function PoliceDepartments({ readContracts, writeContracts, tx, roles, pinataApi }) {
   const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+  }, []);
 
   useEffect(() => {
     async function getPoliceDepartments() {
-      if ((roles, readContracts && readContracts.VehicleLifecycleToken)) {
+      if (readContracts && readContracts.VehicleLifecycleToken) {
+        console.log('refresh police departments');
+        setLoading(true);
         const newData = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
         const list = [];
         const results = [];
@@ -25,32 +32,33 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           );
         });
 
-        Promise.all(list) // (4)
-          .then(function () {
-            const dt = [];
-            newData.forEach((el, i) => {
-              const attrs = Object.assign({}, ...results[i].attributes.map(x => ({ [x.attr_type]: x.value })));
-              dt.push({
-                addr: el.addr,
-                name: el.name,
-                state: el.state,
-                metadataUri: el.metadataUri,
-                imageUri: results[i].image,
-                description: results[i].description,
-                externalUri: results[i].external_uri,
-                address: {
-                  addressLine: attrs.address_line,
-                  postalCode: attrs.postal_code,
-                  country: attrs.country,
-                },
-              });
-            });
-            setData(dt);
+        await Promise.all(list);
+        const dt = [];
+        newData.forEach((el, i) => {
+          const attrs = results[i].attributes
+            ? Object.assign({}, ...results[i].attributes.map(x => ({ [x.attr_type]: x.value })))
+            : {};
+          dt.push({
+            addr: el.addr,
+            name: el.name,
+            state: el.state,
+            metadataUri: el.metadataUri,
+            imageUri: results[i].image,
+            description: results[i].description,
+            externalUri: results[i].external_uri,
+            address: {
+              addressLine: attrs.address_line,
+              postalCode: attrs.postal_code,
+              country: attrs.country,
+            },
           });
+        });
+        setData(dt);
+        setLoading(false);
       }
     }
     getPoliceDepartments();
-  }, [tx, roles, readContracts, writeContracts]);
+  }, [readContracts]);
 
   const columns = [
     {
@@ -99,7 +107,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           allowed={roles && roles.isGovernment}
           onChange={async () => {
             const fun = getToggleEntityMethod(writeContracts, entityType.POLICE, record.state, record.addr);
-            const result = await executeToggleEntityMethod(tx, fun);
+            const result = await executeMethod(tx, fun);
           }}
         />
       ),
@@ -129,16 +137,21 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
   };
 
   return (
-    <div style={{ border: "1px solid #cccccc", padding: 16, width: "100%", margin: "auto", marginTop: 64 }}>
-      {data && (
-        <div>
-          <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
-        </div>
+    <>
+      <Table rowKey={record => record.addr} dataSource={data} columns={columns} loading={loading} />
+      {roles && (
+        <Button type="primary" disabled={!roles.isGovernment} onClick={showAddPoliceDepartmentForm}>
+          Add Police Department
+        </Button>
       )}
-      <Button type="primary" disabled={!roles.isGovernment} onClick={showAddPoliceDepartmentForm}>
-        Add Police Department
-      </Button>
-      <AddPoliceDepartmentForm visible={visible} setVisible={setVisible} pinataApi={pinataApi} />
-    </div>
+
+      <AddPoliceDepartmentForm
+        tx={tx}
+        visible={visible}
+        setVisible={setVisible}
+        pinataApi={pinataApi}
+        writeContracts={writeContracts}
+      />
+    </>
   );
 }

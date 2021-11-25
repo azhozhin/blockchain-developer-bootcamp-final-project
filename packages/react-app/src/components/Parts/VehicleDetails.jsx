@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Address } from "..";
-import { Row, Col, Image, Button, Modal } from "antd";
+import { Row, Col, Image, Button, Table, Divider } from "antd";
 import axios from "axios";
-import KeyValue from "../KeyValue";
 import ServiceRecords from "./ServiceRecords";
 import PoliceRecords from "./PoliceRecords";
 import AddPoliceRecordForm from "./AddPoliceRecordForm";
@@ -10,44 +8,17 @@ import AddServiceRecordForm from "./AddServiceRecordForm";
 
 export default function Vehicle({ readContracts, writeContracts, tokenId, roles }) {
   const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
   const [addPoliceRecordVisible, setAddPoliceRecordVisible] = useState(false);
   const [addServiceRecordVisible, setAddServiceRecordVisible] = useState(false);
+  const [properties, setProperties] = useState([]);
 
   useEffect(() => {
     async function getVehicle() {
       if (readContracts && readContracts.VehicleLifecycleToken && tokenId != "") {
+        setLoading(true);
         const newData = await readContracts.VehicleLifecycleToken.getVehicleDetailsByTokenId(tokenId);
         const metadataUri = await readContracts.VehicleLifecycleToken.tokenURI(tokenId);
-        const rawPoliceLogs = await readContracts.VehicleLifecycleToken.getPoliceLogEntries(tokenId);
-        const rawServiceLogs = await readContracts.VehicleLifecycleToken.getServiceLogEntries(tokenId);
-
-        const policeLogs = [];
-        for (const log of rawPoliceLogs) {
-          const timestamp = log.timestamp;
-          const recordUri = log.recordUri;
-          const recordResp = await axios.get(recordUri);
-          const record = recordResp.data;
-          policeLogs.push({
-            timestamp: timestamp,
-            principal: "TBD",
-            record: record,
-          });
-        }
-
-        const serviceLogs = [];
-        for (const log of rawServiceLogs) {
-          const timestamp = log.timestamp;
-          const mileage = log.mileage;
-          const recordUri = log.recordUri;
-          const recordResp = await axios.get(recordUri);
-          const record = recordResp.data;
-          serviceLogs.push({
-            timestamp: timestamp,
-            principal: "TBD",
-            mileage: mileage,
-            record: record,
-          });
-        }
 
         const res = await axios.get(metadataUri);
         const metadata = res.data;
@@ -76,11 +47,22 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
           externalUri: metadata.externalUri,
           ipfsWikiUri: attrs.ipfs_wiki,
           dynamicAttributes: attributes.dynamic,
-          serviceLogs: serviceLogs,
-          policeLogs: policeLogs,
         };
-        console.log(o);
+        const properties = [
+          { name: "tokenId", value: newData.tokenId.toString() },
+          { name: "vin", value: newData.vin },
+          { name: "make", value: newData.make },
+          { name: "model", value: newData.model },
+          { name: "color", value: newData.color },
+          { name: "year", value: newData.year },
+          { name: "maxMileage", value: newData.maxMileage },
+          { name: "engineSize", value: newData.engineSize },
+          { name: "description", value: metadata.description },
+        ];
+        setProperties(properties);
+
         setData(o);
+        setLoading(false);
       }
     }
     getVehicle();
@@ -94,35 +76,45 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
     setAddServiceRecordVisible(true);
   };
 
+  const columns = [
+    {
+      title: "Property",
+      dataIndex: "name",
+      key: "name",
+      width: "120px"
+    },
+    {
+      title: "Value",
+      dataIndex: "value",
+      key: "value",
+    },
+  ];
+
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: "100%", margin: "auto", marginTop: 25 }}>
       {data && (
         <div>
           <Row gutter={16}>
             <Col span={12}>
-              <Image src={data.imageUri} />
+              <Image src={data.imageUri} loading={loading}/>
             </Col>
-            <Col span={6}>
-              <h3>Standard Properties</h3>
-              <Row gutter={[16, 16]}>
-                <KeyValue name={"Vin"} value={data.vin} />
-                <KeyValue name={"Make"} value={data.make} />
-                <KeyValue name={"Model"} value={data.model} />
-                <KeyValue name={"Color"} value={data.color} />
-                <KeyValue name={"Year"} value={data.year} />
-                <KeyValue name={"MaxMileage"} value={data.maxMileage} />
-                <KeyValue name={"engineSize"} value={data.engineSize} />
-              </Row>
+            <Col span={8}>
+              <Table dataSource={properties} columns={columns} size="small" pagination={false} loading={loading}/>
             </Col>
-            <Col span={6}>
-              <h3>Technical Specs</h3>
-              TBD
+          </Row>
+          <Row>
+            <Col>
+              <Divider/>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
               <h3>Service Records</h3>
-              <ServiceRecords logs={data.serviceLogs} />
+              <ServiceRecords
+                readContracts={readContracts}
+                tokenId={tokenId}
+                refreshTrigger={addServiceRecordVisible}
+              />
               <Button disabled={!roles.isServiceFactory} onClick={showAddServiceRecord}>
                 Add Service Record
               </Button>
@@ -135,7 +127,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
             </Col>
             <Col span={12}>
               <h3>Police Records</h3>
-              <PoliceRecords logs={data.policeLogs} />
+              <PoliceRecords readContracts={readContracts} tokenId={tokenId} refreshTrigger={addPoliceRecordVisible} />
               <Button disabled={!roles.isPolice} onClick={showAddPoliceRecord}>
                 Add Police Record
               </Button>

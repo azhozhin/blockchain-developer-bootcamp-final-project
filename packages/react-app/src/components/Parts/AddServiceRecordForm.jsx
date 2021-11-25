@@ -66,12 +66,15 @@ export default function AddServiceRecordForm({ visible, setVisible, vehicleDetai
   };
 
   useEffect(() => {
-    form.setFieldsValue({
-      vin: vehicleDetails.vin,
-      vehicle: vehicleDetails.make + " " + vehicleDetails.model,
-      color: vehicleDetails.color,
-      year: vehicleDetails.year,
-    });
+    if (visible)
+    {
+      form.setFieldsValue({
+        vin: vehicleDetails.vin,
+        vehicle: vehicleDetails.make + " " + vehicleDetails.model,
+        color: vehicleDetails.color,
+        year: vehicleDetails.year,
+      });
+    }
   }, [visible]);
 
   return (
@@ -89,6 +92,7 @@ export default function AddServiceRecordForm({ visible, setVisible, vehicleDetai
           Confirm
         </Button>,
       ]}
+      getContainer={false}
     >
       <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} layout="horizontal">
         <Form.Item name="vin" label="Vin" rules={[{ required: true }]}>

@@ -10,7 +10,7 @@ export const createBlob = obj => {
 };
 
 // const file = fs.createReadStream(filename);
-export const pinFileToIpfs = async (
+export const pinFileToIpfsWithProgress = async (
   file,
   name,
   pinataApiKey,

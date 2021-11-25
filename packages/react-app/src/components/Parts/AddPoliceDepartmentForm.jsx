@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Input, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 
-import { pinFileToIpfs, pinJsonToIpfs } from "../../helpers/ipfsHelper";
+const { TextArea } = Input;
 import { AddressInput } from "..";
 import faker from "faker";
-import { fake } from "faker/locale/zh_TW";
+import { entityType, executeMethod, serializePoliceDepartmentMetadata } from "../../helpers/entityHelper";
 
 const incidents = [
   "hit road divider",
@@ -16,7 +16,7 @@ const incidents = [
   "hit animal crossing the road",
 ];
 
-export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDetails, writeContracts, pinataApi }) {
+export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDetails, writeContracts, pinataApi, tx }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -25,21 +25,13 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
   const handleOk = async () => {
     setConfirmLoading(true);
     const fields = form.getFieldsValue();
-    const obj = {
-      name: fields.name,
-      description: fields.description,
-      externalUri: fields.externalUri,
-      addressLine: fields.addressLine,
-      postalCode: fields.postalCode,
-      country: fields.country,
-      addr: fields.addr,
-    };
-    const name = "policeRecord-" + fields.vin;
-    const data = await pinJsonToIpfs(obj, name, pinataApi.key, pinataApi.secret);
+    fields.imageUri = fileList[0].originFileObj.url;
+    [obj, jsonName] = serializePoliceDepartmentMetadata(fields);
+    const data = await pinataApi.pinJsonToIpfs(obj, jsonName);
     const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
     try {
-      const tokenId = BigInt(vehicleDetails.tokenId);
-      await writeContracts.VehicleLifecycleToken.addPoliceLogEntry(tokenId, metadataUri);
+      const fun = writeContracts.VehicleLifecycleToken.add(entityType.POLICE, addr, name, metadataUri);
+      const result = await executeMethod(tx, fun);
       setVisible(false);
       form.resetFields();
     } catch (e) {
@@ -49,6 +41,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
   };
 
   const handleCancel = () => {
+    form.resetFields();
     setVisible(false);
   };
 
@@ -57,7 +50,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
     const cityName = faker.address.cityName();
     form.setFieldsValue({
       name: cityName + " Police Department",
-      description: "",
+      description: faker.lorem.paragraph(),
       externalUri: faker.internet.url(),
       addressLine: faker.address.streetAddress() + ", " + cityName,
       postalCode: faker.address.zipCode(),
@@ -86,11 +79,10 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
 
   const uploadImage = async options => {
     const { onSuccess, onError, file, onProgress } = options;
-    const data = await pinFileToIpfs(
+    const name = "policeDepartment-" + 1;
+    const data = await pinataApi.pinFileToIpfsWithProgress(
       file,
-      "policeDepartment-" + 1,
-      pinataApi.key,
-      pinataApi.secret,
+      name,
       setProgress,
       onSuccess,
       onError,
@@ -110,8 +102,9 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
 
   return (
     <Modal
-      title="Add Police Record"
+      title="Add Police Department"
       visible={visible}
+      onCancel={handleCancel}
       footer={[
         <Button key="fillForm" type="link" htmlType="button" onClick={onFill}>
           Fill form
@@ -123,6 +116,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
           Confirm
         </Button>,
       ]}
+      getContainer={false}
     >
       <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} layout="horizontal">
         <Form.Item name="image" label="Image" rules={[{ required: true }]}>
@@ -142,7 +136,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
           <Input />
         </Form.Item>
         <Form.Item name="description" label="Desc" rules={[{ required: true }]}>
-          <Input />
+          <TextArea rows={4} />
         </Form.Item>
         <Form.Item name="externalUri" label="Url" rules={[{ required: true }]}>
           <Input />

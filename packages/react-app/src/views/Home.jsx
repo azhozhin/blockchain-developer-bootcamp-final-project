@@ -9,6 +9,7 @@ import Manufacturers from "../components/Parts/Manufacturers";
 import ServiceFactories from "../components/Parts/ServiceFactories";
 import VehicleDetails from "../components/Parts/VehicleDetails";
 import VehicleSearch from "../components/Parts/VehicleSearch";
+import Garage from "../components/Parts/Garage";
 
 const { TabPane } = Tabs;
 
@@ -23,7 +24,7 @@ export default function Home({
 }) {
   const [roles, setRoles] = useState();
   const [tokenId, setTokenId] = useState("");
-  const [activeTab, setActiveTab] = useState("search");
+  const [activeTab, setActiveTab] = useState("garage");
 
   useEffect(() => {
     async function getRoles() {
@@ -38,7 +39,7 @@ export default function Home({
       }
     }
     getRoles();
-  }, [readContracts, address]);
+  }, [address, readContracts]);
 
   const handleChange = newTokenId => {
     if (newTokenId) {
@@ -56,6 +57,17 @@ export default function Home({
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 1200, margin: "auto", marginTop: 25 }}>
       <Tabs activeKey={activeTab} type="card" onChange={onTabChange}>
+        <TabPane tab="Garage" key="garage">
+          <Garage
+            roles={roles}
+            address={address}
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            handleChange={handleChange}
+            tx={tx}
+            pinataApi={pinataApi}
+          />
+        </TabPane>
         <TabPane tab="Search" key="search">
           <VehicleSearch readContracts={readContracts} handleChange={handleChange} />
         </TabPane>

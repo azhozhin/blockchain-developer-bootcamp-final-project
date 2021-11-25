@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Image, Input, Space, Select, Button } from "antd";
+import { Table, Image, Input, Space, Select, Button, Divider } from "antd";
 import { notification } from "antd";
 
 const { Search } = Input;
@@ -9,11 +9,11 @@ export default function VehicleSearch({ readContracts, handleChange }) {
   const [searchMode, setSearchMode] = useState("vin");
   const [search, setSearch] = useState("");
   const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
 
   const onSearch = async value => {
-    console.log("onSearch:" + value);
     if (value != "") {
-      console.log("Search:" + value);
+      setLoading(true);
       setSearch(value);
       let result;
       switch (searchMode) {
@@ -26,7 +26,6 @@ export default function VehicleSearch({ readContracts, handleChange }) {
               message: "Transaction Error",
               description: "" + e,
             });
-            console.log(e);
             break;
           }
           if (tokenId) {
@@ -37,7 +36,6 @@ export default function VehicleSearch({ readContracts, handleChange }) {
                 message: "Transaction Error",
                 description: "" + e,
               });
-              console.log(e);
             }
           }
           break;
@@ -49,31 +47,28 @@ export default function VehicleSearch({ readContracts, handleChange }) {
               message: "Transaction Error",
               description: "" + e,
             });
-            console.log(e);
           }
 
           break;
         default:
           throw "Unexpected searchMode:" + searchMode;
       }
-      console.log(result);
       if (result) {
         setData([result]);
       } else {
         setData([]);
       }
+      setLoading(false);
     } else {
       setData([]);
     }
   };
   const onChange = value => {
-    console.log(value);
     setSearchMode(value);
   };
 
   const onTokenIdClick = (event, tokenId) => {
     event.stopPropagation();
-    console.log("onTokenIdClick called");
     handleChange(tokenId);
   };
 
@@ -135,7 +130,7 @@ export default function VehicleSearch({ readContracts, handleChange }) {
   );
 
   return (
-    <Space direction="vertical" style={{ width: "800px" }}>
+    <>
       <Search
         addonBefore={selectBefore}
         placeholder="search text"
@@ -145,7 +140,9 @@ export default function VehicleSearch({ readContracts, handleChange }) {
         onSearch={onSearch}
       />
 
-      <Table rowKey={record => record.tokenId} columns={columns} dataSource={data} />
-    </Space>
+      <Divider/>
+
+      <Table rowKey={record => record.tokenId} columns={columns} dataSource={data} loading={loading}/>
+    </>
   );
 }

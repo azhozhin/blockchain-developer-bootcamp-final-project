@@ -3,14 +3,20 @@ import { Address } from "..";
 import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
-import { entityType, getToggleEntityMethod, executeToggleEntityMethod } from "../../helpers/entityHelper";
+import { entityType, getToggleEntityMethod, executeMethod } from "../../helpers/entityHelper";
 
 export default function PoliceDepartments({ readContracts, writeContracts, tx, roles }) {
   const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+  }, []);
 
   useEffect(() => {
     async function getServiceFactories() {
       if (roles && readContracts && readContracts.VehicleLifecycleToken) {
+        setLoading(true);
         const newData = await readContracts.VehicleLifecycleToken.getServiceFactories();
         const list = [];
         const results = [];
@@ -44,11 +50,13 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
               });
             });
             setData(dt);
+            setLoading(false);
           });
       }
     }
     getServiceFactories();
   }, [tx, roles, readContracts, writeContracts]);
+
   //const data = ;
   //console.log(data);
   const columns = [
@@ -98,7 +106,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           allowed={roles.isGovernment}
           onChange={async () => {
             const fun = getToggleEntityMethod(writeContracts, entityType.SERVICE_FACTORY, record.state, record.addr);
-            const result = await executeToggleEntityMethod(tx, fun);
+            const result = await executeMethod(tx, fun);
           }}
         />
       ),
@@ -123,15 +131,13 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
     },
   ];
   return (
-    <div style={{ border: "1px solid #cccccc", padding: 16, width: "100%", margin: "auto", marginTop: 64 }}>
-      {data && (
-        <div>
-          <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
-        </div>
-      )}
+    <>
+      <div>
+        <Table rowKey={record => record.addr} dataSource={data} columns={columns} loading={loading} />
+      </div>
       <Button type="primary" disabled={!roles.isGovernment}>
         Add Service Factory
       </Button>
-    </div>
+    </>
   );
 }

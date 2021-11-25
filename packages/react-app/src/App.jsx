@@ -30,6 +30,7 @@ import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
+import { pinFileToIpfsWithProgress, pinJsonToIpfs } from "./helpers/ipfsHelper";
 
 const { ethers } = require("ethers");
 /*
@@ -80,8 +81,25 @@ function App(props) {
   const [address, setAddress] = useState();
 
   const pinataApi = {
-    key: process.env.REACT_APP_PINATA_API_KEY,
-    secret: process.env.REACT_APP_PINATA_API_SECRET,
+    pinFileToIpfsWithProgress: (file, name, setProgress, onSuccess, onError, onProgress) => {
+      const pinataApiKey = process.env.REACT_APP_PINATA_API_KEY;
+      const pinataSecretApiKey = process.env.REACT_APP_PINATA_API_SECRET;
+      return pinFileToIpfsWithProgress(
+        file,
+        name,
+        pinataApiKey,
+        pinataSecretApiKey,
+        setProgress,
+        onSuccess,
+        onError,
+        onProgress,
+      );
+    },
+    pinJsonToIpfs: (jsonBody, name) => {
+      const pinataApiKey = process.env.REACT_APP_PINATA_API_KEY;
+      const pinataSecretApiKey = process.env.REACT_APP_PINATA_API_SECRET;
+      return pinJsonToIpfs(jsonBody, name, pinataApiKey, pinataSecretApiKey);
+    },
   };
   // load all your providers
   const localProvider = useStaticJsonRPC([

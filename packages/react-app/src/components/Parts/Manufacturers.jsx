@@ -3,7 +3,7 @@ import { Address } from "..";
 import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
-import { entityType, getToggleEntityMethod, executeToggleEntityMethod } from "../../helpers/entityHelper";
+import { entityType, getToggleEntityMethod, executeMethod } from "../../helpers/entityHelper";
 
 export default function Manufacturers({ readContracts, writeContracts, roles, tx }) {
   const [data, setData] = useState();
@@ -102,7 +102,7 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
               [record.addr]: true,
             }));
             const fun = getToggleEntityMethod(writeContracts, entityType.MANUFACTURER, record.state, record.addr);
-            const result = await executeToggleEntityMethod(tx, fun);
+            const result = await executeMethod(tx, fun);
             setLoadingArray(prevState => ({
               ...prevState,
               [record.addr]: false,
@@ -131,7 +131,7 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
     },
   ];
   return (
-    <div style={{ border: "1px solid #cccccc", padding: 16, width: "100%", margin: "auto", marginTop: 64 }}>
+    <>
       {data && (
         <div>
           <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
@@ -140,6 +140,6 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
       <Button type="primary" disabled={!roles.isGovernment}>
         Add Manufacturer
       </Button>
-    </div>
+    </>
   );
 }
