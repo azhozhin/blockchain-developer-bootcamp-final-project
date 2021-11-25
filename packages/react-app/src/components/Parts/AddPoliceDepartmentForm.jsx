@@ -16,7 +16,7 @@ const incidents = [
   "hit animal crossing the road",
 ];
 
-export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDetails, writeContracts, pinataApi, tx }) {
+export default function AddPoliceDepartmentForm({ visible, setVisible, writeContracts, pinataApi, tx }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -30,8 +30,10 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
     const data = await pinataApi.pinJsonToIpfs(obj, jsonName);
     const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
     try {
-      const fun = writeContracts.VehicleLifecycleToken.add(entityType.POLICE, addr, name, metadataUri);
-      const result = await executeMethod(tx, fun);
+      const result = await executeMethod(
+        tx,
+        writeContracts.VehicleLifecycleToken.add(entityType.POLICE, fields.addr, fields.name, metadataUri),
+      );
       setVisible(false);
       form.resetFields();
     } catch (e) {
@@ -80,14 +82,7 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, vehicleDe
   const uploadImage = async options => {
     const { onSuccess, onError, file, onProgress } = options;
     const name = "policeDepartment-" + 1;
-    const data = await pinataApi.pinFileToIpfsWithProgress(
-      file,
-      name,
-      setProgress,
-      onSuccess,
-      onError,
-      onProgress,
-    );
+    const data = await pinataApi.pinFileToIpfsWithProgress(file, name, setProgress, onSuccess, onError, onProgress);
     file.url = "https://ipfs.io/ipfs/" + data.IpfsHash;
   };
 

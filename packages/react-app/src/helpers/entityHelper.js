@@ -7,14 +7,6 @@ export const entityType = {
   POLICE: 3,
 };
 
-export const getToggleEntityMethod = (writeContracts, entityType, state, targetAddr) => {
-  const fun =
-    state == 1
-      ? writeContracts.VehicleLifecycleToken.disable(entityType, targetAddr)
-      : writeContracts.VehicleLifecycleToken.enable(entityType, targetAddr);
-  return fun;
-};
-
 export const executeMethod = async (tx, fun) => {
   const result = tx(fun, update => {
     console.log("📡 Transaction Update:", update);

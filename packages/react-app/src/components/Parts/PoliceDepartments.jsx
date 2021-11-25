@@ -3,7 +3,7 @@ import { Address } from "..";
 import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
-import { entityType, getToggleEntityMethod, executeMethod } from "../../helpers/entityHelper";
+import { entityType, executeMethod } from "../../helpers/entityHelper";
 import AddPoliceDepartmentForm from "./AddPoliceDepartmentForm";
 
 export default function PoliceDepartments({ readContracts, writeContracts, tx, roles, pinataApi }) {
@@ -18,7 +18,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
   useEffect(() => {
     async function getPoliceDepartments() {
       if (readContracts && readContracts.VehicleLifecycleToken) {
-        console.log('refresh police departments');
+        console.log("refresh police departments");
         setLoading(true);
         const newData = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
         const list = [];
@@ -106,8 +106,12 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           state={state}
           allowed={roles && roles.isGovernment}
           onChange={async () => {
-            const fun = getToggleEntityMethod(writeContracts, entityType.POLICE, record.state, record.addr);
-            const result = await executeMethod(tx, fun);
+            const result = await executeMethod(
+              tx,
+              state == 1
+                ? writeContracts.VehicleLifecycleToken.disable(entityType.POLICE, targetAddr)
+                : writeContracts.VehicleLifecycleToken.enable(entityType.POLICE, targetAddr),
+            );
           }}
         />
       ),

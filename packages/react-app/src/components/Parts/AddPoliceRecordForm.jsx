@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Input, DatePicker } from "antd";
 import { pinJsonToIpfs } from "../../helpers/ipfsHelper";
+import { executeMethod } from "../../helpers/entityHelper";
 
 const incidents = [
   "hit road divider",
@@ -11,7 +12,7 @@ const incidents = [
   "hit animal crossing the road",
 ];
 
-export default function AddPoliceRecordForm({ visible, setVisible, vehicleDetails, writeContracts }) {
+export default function AddPoliceRecordForm({ visible, setVisible, vehicleDetails, writeContracts, tx }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -37,7 +38,10 @@ export default function AddPoliceRecordForm({ visible, setVisible, vehicleDetail
     const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
     try {
       const tokenId = BigInt(vehicleDetails.tokenId);
-      await writeContracts.VehicleLifecycleToken.addPoliceLogEntry(tokenId, metadataUri);
+      const result = await executeMethod(
+        tx,
+        writeContracts.VehicleLifecycleToken.addPoliceLogEntry(tokenId, metadataUri),
+      );
       setVisible(false);
       form.resetFields();
     } catch (e) {
@@ -61,8 +65,7 @@ export default function AddPoliceRecordForm({ visible, setVisible, vehicleDetail
   };
 
   useEffect(() => {
-    if (visible)
-    {
+    if (visible) {
       form.setFieldsValue({
         vin: vehicleDetails.vin,
         vehicle: vehicleDetails.make + " " + vehicleDetails.model,

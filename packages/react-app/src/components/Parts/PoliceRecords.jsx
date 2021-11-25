@@ -45,7 +45,7 @@ export default function PoliceRecords({ tokenId, readContracts, refreshTrigger }
       title: "Timestamp",
       dataIndex: "timestamp",
       key: "timestamp",
-      width: '150px',
+      width: "150px",
       render: (timestamp, record) => <div>{record.record.datetime}</div>,
     },
     {

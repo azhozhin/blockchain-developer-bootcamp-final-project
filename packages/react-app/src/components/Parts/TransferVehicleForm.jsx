@@ -3,7 +3,15 @@ import { Space, Form, Modal, Image, Button, Input } from "antd";
 import { AddressInput } from "..";
 import { executeMethod } from "../../helpers/entityHelper";
 
-export default function TransferVehicleForm({ address, visible, setVisible, readContracts, writeContracts, tokenId, tx }) {
+export default function TransferVehicleForm({
+  address,
+  visible,
+  setVisible,
+  readContracts,
+  writeContracts,
+  tokenId,
+  tx,
+}) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -14,7 +22,10 @@ export default function TransferVehicleForm({ address, visible, setVisible, read
     try {
       const fromAddr = address;
       const toAddr = fields.toAddr;
-      const result = await executeMethod(tx, writeContracts.VehicleLifecycleToken.transferFrom(fromAddr, toAddr, tokenId));
+      const result = await executeMethod(
+        tx,
+        writeContracts.VehicleLifecycleToken.transferFrom(fromAddr, toAddr, tokenId),
+      );
       setVisible(false);
       form.resetFields();
     } catch (e) {

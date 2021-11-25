@@ -3,7 +3,7 @@ import { Address } from "..";
 import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
-import { entityType, getToggleEntityMethod, executeMethod } from "../../helpers/entityHelper";
+import { entityType, executeMethod } from "../../helpers/entityHelper";
 
 export default function Manufacturers({ readContracts, writeContracts, roles, tx }) {
   const [data, setData] = useState();
@@ -101,8 +101,12 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
               ...prevState,
               [record.addr]: true,
             }));
-            const fun = getToggleEntityMethod(writeContracts, entityType.MANUFACTURER, record.state, record.addr);
-            const result = await executeMethod(tx, fun);
+            const result = await executeMethod(
+              tx,
+              state == 1
+                ? writeContracts.VehicleLifecycleToken.disable(entityType.MANUFACTURER, targetAddr)
+                : writeContracts.VehicleLifecycleToken.enable(entityType.MANUFACTURER, targetAddr),
+            );
             setLoadingArray(prevState => ({
               ...prevState,
               [record.addr]: false,

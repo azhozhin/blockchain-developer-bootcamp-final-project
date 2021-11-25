@@ -68,18 +68,19 @@ export default function AddVehicleForm({ readContracts, writeContracts, tx, pina
     const data = await pinataApi.pinJsonToIpfs(obj, jsonName);
     const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
     try {
-      const fun = writeContracts.VehicleLifecycleToken.manufactureVehicle(
-        fields.vin,
-        fields.make,
-        fields.model,
-        fields.color,
-        fields.year,
-        fields.maxMileage,
-        fields.engineSize,
-        metadataUri,
+      const result = await executeMethod(
+        tx,
+        writeContracts.VehicleLifecycleToken.manufactureVehicle(
+          fields.vin,
+          fields.make,
+          fields.model,
+          fields.color,
+          fields.year,
+          fields.maxMileage,
+          fields.engineSize,
+          metadataUri,
+        ),
       );
-
-      const result = await executeMethod(tx, fun);
       setVisible(false);
       form.resetFields();
       setFileList([]);

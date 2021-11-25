@@ -73,6 +73,7 @@ export default function Home({
         </TabPane>
         <TabPane tab="Vehicle" key="vehicle">
           <VehicleDetails
+            tx={tx}
             readContracts={readContracts}
             writeContracts={writeContracts}
             tokenId={tokenId}

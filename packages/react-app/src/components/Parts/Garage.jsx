@@ -110,9 +110,11 @@ export default function Garage({ address, readContracts, writeContracts, handleC
     <>
       <Table rowKey={record => record.tokenId} dataSource={vehicles} columns={columns} loading={loading} />
 
-      <Button type="primary" onClick={showAddVehicleForm}>
-        New Car
-      </Button>
+      {roles && (
+        <Button type="primary" onClick={showAddVehicleForm} disabled={!roles.isManufacturer}>
+          New Car
+        </Button>
+      )}
       <AddVehicleForm
         address={address}
         pinataApi={pinataApi}

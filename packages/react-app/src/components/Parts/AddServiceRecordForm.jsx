@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Input, DatePicker } from "antd";
 import { pinJsonToIpfs } from "../../helpers/ipfsHelper";
+import { executeMethod } from "../../helpers/entityHelper";
 
 const services = [
   {
@@ -42,7 +43,10 @@ export default function AddServiceRecordForm({ visible, setVisible, vehicleDetai
     try {
       const tokenId = BigInt(vehicleDetails.tokenId);
       const mileage = parseInt(fields.mileage);
-      await writeContracts.VehicleLifecycleToken.addServiceLogEntry(tokenId, mileage, metadataUri);
+      const result = await executeMethod(
+        tx,
+        writeContracts.VehicleLifecycleToken.addServiceLogEntry(tokenId, mileage, metadataUri),
+      );
       setVisible(false);
       form.resetFields();
     } catch (e) {
@@ -66,8 +70,7 @@ export default function AddServiceRecordForm({ visible, setVisible, vehicleDetai
   };
 
   useEffect(() => {
-    if (visible)
-    {
+    if (visible) {
       form.setFieldsValue({
         vin: vehicleDetails.vin,
         vehicle: vehicleDetails.make + " " + vehicleDetails.model,

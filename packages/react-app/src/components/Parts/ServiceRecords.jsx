@@ -17,7 +17,7 @@ export default function ServiceRecords({ readContracts, tokenId, refreshTrigger 
       if (tokenId && readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const serviceFactories = await readContracts.VehicleLifecycleToken.getServiceFactories();
-        const sfm = Object.assign({}, ...serviceFactories.map((x) => ({[x.addr]: x.name})));
+        const sfm = Object.assign({}, ...serviceFactories.map(x => ({ [x.addr]: x.name })));
         setServiceFactoryMap(sfm);
 
         const rawServiceLogs = await readContracts.VehicleLifecycleToken.getServiceLogEntries(tokenId);
@@ -49,7 +49,7 @@ export default function ServiceRecords({ readContracts, tokenId, refreshTrigger 
       title: "Timestamp",
       dataIndex: "timestamp",
       key: "timestamp",
-      width: '150px',
+      width: "150px",
       render: (timestamp, record) => <div>{record.record.datetime}</div>,
     },
     {
@@ -61,10 +61,7 @@ export default function ServiceRecords({ readContracts, tokenId, refreshTrigger 
       title: "Principal",
       dataIndex: "principal",
       key: "principal",
-      render: (principal)=>
-        <div>
-          {serviceFactoryMap[principal]}
-        </div>
+      render: principal => <div>{serviceFactoryMap[principal]}</div>,
     },
     {
       title: "Record",

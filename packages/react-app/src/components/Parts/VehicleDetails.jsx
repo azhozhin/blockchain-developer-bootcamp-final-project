@@ -6,7 +6,7 @@ import PoliceRecords from "./PoliceRecords";
 import AddPoliceRecordForm from "./AddPoliceRecordForm";
 import AddServiceRecordForm from "./AddServiceRecordForm";
 
-export default function Vehicle({ readContracts, writeContracts, tokenId, roles }) {
+export default function Vehicle({ readContracts, writeContracts, tokenId, roles, tx }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [addPoliceRecordVisible, setAddPoliceRecordVisible] = useState(false);
@@ -131,6 +131,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
                 Add Police Record
               </Button>
               <AddPoliceRecordForm
+                tx={tx}
                 visible={addPoliceRecordVisible}
                 setVisible={setAddPoliceRecordVisible}
                 vehicleDetails={data}

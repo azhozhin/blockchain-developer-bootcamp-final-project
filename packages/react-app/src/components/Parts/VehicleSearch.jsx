@@ -139,10 +139,8 @@ export default function VehicleSearch({ readContracts, handleChange }) {
         size="large"
         onSearch={onSearch}
       />
-
-      <Divider/>
-
-      <Table rowKey={record => record.tokenId} columns={columns} dataSource={data} loading={loading}/>
+      <Divider />
+      <Table rowKey={record => record.tokenId} columns={columns} dataSource={data} loading={loading} />
     </>
   );
 }

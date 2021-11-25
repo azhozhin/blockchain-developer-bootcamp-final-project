@@ -3,7 +3,7 @@ import { Address } from "..";
 import { Table, Switch, Image, Button } from "antd";
 import axios from "axios";
 import EntityState from "../EntityState";
-import { entityType, getToggleEntityMethod, executeMethod } from "../../helpers/entityHelper";
+import { entityType, executeMethod } from "../../helpers/entityHelper";
 
 export default function PoliceDepartments({ readContracts, writeContracts, tx, roles }) {
   const [data, setData] = useState();
@@ -105,8 +105,12 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           state={state}
           allowed={roles.isGovernment}
           onChange={async () => {
-            const fun = getToggleEntityMethod(writeContracts, entityType.SERVICE_FACTORY, record.state, record.addr);
-            const result = await executeMethod(tx, fun);
+            const result = await executeMethod(
+              tx,
+              state == 1
+                ? writeContracts.VehicleLifecycleToken.disable(entityType.SERVICE_FACTORY, targetAddr)
+                : writeContracts.VehicleLifecycleToken.enable(entityType.SERVICE_FACTORY, targetAddr),
+            );
           }}
         />
       ),
