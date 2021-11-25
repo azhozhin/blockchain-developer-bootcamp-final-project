@@ -18,6 +18,8 @@ It provides multiple benefits for all parties that are participating in lifecycl
 
 ![use cases](images/use-cases.png)
 
+Inspiration taken from paper: [A Blockchain-Based Vehicle Condition Recording System for Second-Hand Vehicle Market](https://www.hindawi.com/journals/wcmc/2021/6623251/)
+
 ## Implementation details
 
 Current implementation of smart contract have 4 distinct roles:
@@ -106,3 +108,14 @@ yarn start
 ```
 
 Open http://localhost:3000 to see the app
+
+## 3rd Party resources
+
+- Image database (The car connection) [picture-scraper](https://github.com/nicolas-gervais/predicting-car-price-from-scraped-data/tree/master/picture-scraper)
+
+## Technologies
+
+## Services
+
+- [pinata.cloud](http://pinata.cloud) - IPFS gateway
+- [alchemy](alchemy.com) - Etherium network http gateway
