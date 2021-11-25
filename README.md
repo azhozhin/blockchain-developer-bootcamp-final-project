@@ -2,6 +2,8 @@
 
 This is final project for Consensys academy blockchain developer bootcamp.
 
+Please note that this is a fork of [scaffold-eth](https://github.com/scaffold-eth/scaffold-eth).
+
 ## The idea
 
 In modern world ownership of something could be proofed in digital way.
@@ -13,6 +15,8 @@ It provides multiple benefits for all parties that are participating in lifecycl
 - Police Departments - can add incident log entries to the vehicles
 - Customers - can see all information regarding vehicle ownership history, service history, and incident history to make informed decision on buying or selling vehicles. Tokenization allow owner to send vehicle token to Auction and get highest price in digital currency. Alternatively customer can pay fiat money to manufacturer or dealer directly and get token ownership transferred immediately.
 - Government - can control all participants on the market, registering manufacturers, service factories, and police departments to the smart contract so they could perform specialized actions to the vehicles. If licensing required for particular role it could be also integrated to the smart contract so participant license could be validated on method execution.
+
+![use cases](images/use-cases.png)
 
 ## Implementation details
 
