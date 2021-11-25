@@ -54,9 +54,13 @@ To optimize contract size in future all capabilities could be converted to separ
 ## Conventions
 
 All public methods are protected by security modifiers related to role or ownership.
-Ownership is separated from role model. 
+Ownership is separated from role model.
 
 Owner could be deployer and it can assign first `admin` (Government) that can in turn create other participants.
+
+## Distribution
+
+IPFS is use everywhere to store information off-chain. For all entities metadataUri stored on-chain, and file itself is stored on IPFS thus all associated information is protected from forgery as well.
 
 ### Government methods
 
