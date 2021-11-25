@@ -82,6 +82,7 @@ export default function AddVehicleForm({ readContracts, writeContracts, tx, pina
       const result = await executeMethod(tx, fun);
       setVisible(false);
       form.resetFields();
+      setFileList([]);
     } catch (e) {
       console.log(e);
     }
@@ -116,6 +117,7 @@ export default function AddVehicleForm({ readContracts, writeContracts, tx, pina
 
   const handleCancel = () => {
     form.resetFields();
+    setFileList([]);
     setVisible(false);
   };
 

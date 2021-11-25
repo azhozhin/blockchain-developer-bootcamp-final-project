@@ -46,13 +46,13 @@ abstract contract PoliceDepartmentManagement is EntityManagement{
         _resumeEntity(EntityType.POLICE, _policeDepartments, addr);
     }
 
-    function getPoliceDepartment(address addr)
-        public
-        view
-        returns (Entity memory)
-    {
-        return _getEntity(_policeDepartments, addr);
-    }
+    // function getPoliceDepartment(address addr)
+    //     public
+    //     view
+    //     returns (Entity memory)
+    // {
+    //     return _getEntity(_policeDepartments, addr);
+    // }
 
     function getPoliceDepartments()
         public

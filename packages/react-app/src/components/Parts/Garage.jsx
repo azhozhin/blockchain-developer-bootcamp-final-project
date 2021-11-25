@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Space } from "antd";
 import AddVehicleForm from "./AddVehicleForm";
+import TransferVehicleForm from "./TransferVehicleForm";
 
 export default function Garage({ address, readContracts, writeContracts, handleChange, roles, tx, pinataApi }) {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [selectedTokenId, setSelectedTokenId] = useState("");
+  const [addNewVehicleFormVisible, setAddNewVehicleFormVisible] = useState(false);
+  const [transferVehicleFormVisible, setTransferVehicleFormVisible] = useState(false);
 
   useEffect(() => {
     //setLoading(true);
@@ -30,7 +33,7 @@ export default function Garage({ address, readContracts, writeContracts, handleC
       //
     }
     LoadMyVehicles();
-  }, [address, readContracts]);
+  }, [address, readContracts, addNewVehicleFormVisible, transferVehicleFormVisible]);
 
   const onTokenIdClick = (event, tokenId) => {
     event.stopPropagation();
@@ -39,7 +42,11 @@ export default function Garage({ address, readContracts, writeContracts, handleC
   };
 
   const showAddVehicleForm = () => {
-    setVisible(true);
+    setAddNewVehicleFormVisible(true);
+  };
+  const showTransferDialog = (event, tokenId) => {
+    setSelectedTokenId(tokenId);
+    setTransferVehicleFormVisible(true);
   };
 
   const columns = [
@@ -80,12 +87,22 @@ export default function Garage({ address, readContracts, writeContracts, handleC
       key: "year",
       width: "70px",
     },
-
     {
       title: "Color",
       dataIndex: "color",
       key: "color",
       width: "70px",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      width: "100px",
+      render: (_, record) => (
+        <>
+          <Button onClick={event => showTransferDialog(event, record.tokenId)}>Transfer</Button>
+        </>
+      ),
     },
   ];
 
@@ -99,10 +116,19 @@ export default function Garage({ address, readContracts, writeContracts, handleC
       <AddVehicleForm
         address={address}
         pinataApi={pinataApi}
-        visible={visible}
-        setVisible={setVisible}
+        visible={addNewVehicleFormVisible}
+        setVisible={setAddNewVehicleFormVisible}
         readContracts={readContracts}
         writeContracts={writeContracts}
+        tx={tx}
+      />
+      <TransferVehicleForm
+        address={address}
+        visible={transferVehicleFormVisible}
+        setVisible={setTransferVehicleFormVisible}
+        readContracts={readContracts}
+        writeContracts={writeContracts}
+        tokenId={selectedTokenId}
         tx={tx}
       />
     </>

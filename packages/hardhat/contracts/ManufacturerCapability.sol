@@ -24,6 +24,11 @@ abstract contract ManufacturerCapability {
     function _manufactureVehicle(uint256 tokenId, string memory vin, string memory make, string memory model, string memory color, uint32 year, uint32 maxMileage, uint32 engineSize) 
         internal 
     {
+        Vehicle memory v = _tokenId2Vehicle[tokenId];
+        require(v.tokenId==0, "TokenId already exists");
+        uint256 id = _vin2TokenId[vin];
+        require(id==0, "VIN is not unique");
+
         Vehicle memory vehicle = Vehicle(tokenId, vin, make, model, color, year, maxMileage, engineSize, block.timestamp);
         _tokenId2Vehicle[tokenId] = vehicle;
         _vin2TokenId[vin] = tokenId;

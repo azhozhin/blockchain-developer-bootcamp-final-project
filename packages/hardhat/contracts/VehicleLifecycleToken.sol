@@ -12,9 +12,9 @@ import "./ManufacturerCapability.sol";
 import "./ServiceFactoryCapability.sol";
 import "./PoliceDepartmentCapability.sol";
 
-//    ERC721Enumerable,
 contract VehicleLifecycleToken is
     ERC721URIStorage,
+    ERC721Enumerable,
     GovernmentManagement,
     ManufacturerCapability,
     ServiceFactoryCapability,
@@ -53,36 +53,32 @@ contract VehicleLifecycleToken is
       _setTokenURI(tokenId, tokenUri);
     }
 
-    // Misc
-    //    ERC721Enumerable,
+    // Overrides
     function supportsInterface(bytes4 interfaceId)
         public
         view
         virtual
-        override(ERC721, AccessControl) 
+        override(ERC721, AccessControl, ERC721Enumerable) 
         returns (bool)
     {
         return 
-            //ERC721Enumerable.supportsInterface(interfaceId) ||
             AccessControl.supportsInterface(interfaceId) ||
             super.supportsInterface(interfaceId);
     }
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override (ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
 
-    // Overrides
-    //    ERC721Enumerable,
-    // function _beforeTokenTransfer(
-    //     address from,
-    //     address to,
-    //     uint256 tokenId
-    // ) internal virtual override (ERC721) {
-    //     super._beforeTokenTransfer(from, to, tokenId);
-    // }
+    function tokenURI(uint256 tokenId) public view virtual override (ERC721, ERC721URIStorage) returns (string memory) {
+        return ERC721URIStorage.tokenURI(tokenId);
+    }
 
-    // function tokenURI(uint256 tokenId) public view virtual override (ERC721) returns (string memory) {
-    //     return ERC721URIStorage.tokenURI(tokenId);
-    // }
-
-    // function _burn(uint256 tokenId) internal virtual override (ERC721, ERC721URIStorage) {
-    //     ERC721URIStorage._burn(tokenId);
-    // }
+    function _burn(uint256 tokenId) internal virtual override (ERC721, ERC721URIStorage) {
+        ERC721URIStorage._burn(tokenId);
+    }
 }
+

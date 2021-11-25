@@ -12,6 +12,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
   const [addPoliceRecordVisible, setAddPoliceRecordVisible] = useState(false);
   const [addServiceRecordVisible, setAddServiceRecordVisible] = useState(false);
   const [properties, setProperties] = useState([]);
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     async function getVehicle() {
@@ -22,16 +23,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
 
         const res = await axios.get(metadataUri);
         const metadata = res.data;
-        const attributes = {
-          dynamic: {},
-        };
-        metadata.attributes.forEach(el => {
-          if (el.attr_type == "group") {
-            attributes.dynamic[el.value] = el.attrs;
-          } else {
-            attributes[el.attr_type] = el.value;
-          }
-        });
+
         const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
         const o = {
           tokenId: newData.tokenId.toString(),
@@ -45,8 +37,6 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
           imageUri: metadata.image,
           description: metadata.description,
           externalUri: metadata.externalUri,
-          ipfsWikiUri: attrs.ipfs_wiki,
-          dynamicAttributes: attributes.dynamic,
         };
         const properties = [
           { name: "tokenId", value: newData.tokenId.toString() },
@@ -57,8 +47,8 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
           { name: "year", value: newData.year },
           { name: "maxMileage", value: newData.maxMileage },
           { name: "engineSize", value: newData.engineSize },
-          { name: "description", value: metadata.description },
         ];
+        setDescription(metadata.description);
         setProperties(properties);
 
         setData(o);
@@ -81,7 +71,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
       title: "Property",
       dataIndex: "name",
       key: "name",
-      width: "120px"
+      width: "120px",
     },
     {
       title: "Value",
@@ -96,15 +86,24 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles 
         <div>
           <Row gutter={16}>
             <Col span={12}>
-              <Image src={data.imageUri} loading={loading}/>
+              <Image src={data.imageUri} loading={loading} />
+              <h3>Description</h3>
+              {description}
             </Col>
-            <Col span={8}>
-              <Table dataSource={properties} columns={columns} size="small" pagination={false} loading={loading}/>
+            <Col span={12}>
+              <Table
+                rowKey={record => record.name}
+                dataSource={properties}
+                columns={columns}
+                size="small"
+                pagination={false}
+                loading={loading}
+              />
             </Col>
           </Row>
           <Row>
             <Col>
-              <Divider/>
+              <Divider />
             </Col>
           </Row>
           <Row gutter={16}>

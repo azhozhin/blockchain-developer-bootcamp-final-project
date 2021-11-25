@@ -46,13 +46,13 @@ abstract contract ManufacturerManagement is EntityManagement {
         _resumeEntity(EntityType.MANUFACTURER, _manufacturers, addr);
     }
 
-    function getManufacturer(address addr)
-        public
-        view
-        returns (Entity memory)
-    {
-        return _getEntity(_manufacturers, addr);
-    }
+    // function getManufacturer(address addr)
+    //     public
+    //     view
+    //     returns (Entity memory)
+    // {
+    //     return _getEntity(_manufacturers, addr);
+    // }
 
     function getManufacturers()
         public

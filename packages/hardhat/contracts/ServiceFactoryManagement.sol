@@ -46,13 +46,13 @@ abstract contract ServiceFactoryManagement is EntityManagement{
         _resumeEntity(EntityType.SERVICE_FACTORY, _serviceFactories, addr);
     }
 
-    function getServiceFactory(address addr)
-        public
-        view
-        returns (Entity memory)
-    {
-        return _getEntity(_serviceFactories, addr);
-    }
+    // function getServiceFactory(address addr)
+    //     public
+    //     view
+    //     returns (Entity memory)
+    // {
+    //     return _getEntity(_serviceFactories, addr);
+    // }
 
     function getServiceFactories()
         public
