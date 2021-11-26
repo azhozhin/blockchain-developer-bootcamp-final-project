@@ -5,8 +5,10 @@ import ServiceRecords from "./ServiceRecords";
 import PoliceRecords from "./PoliceRecords";
 import AddPoliceRecordForm from "./AddPoliceRecordForm";
 import AddServiceRecordForm from "./AddServiceRecordForm";
+import TokenEvents from "../TokenEvents";
 
-export default function Vehicle({ readContracts, writeContracts, tokenId, roles, tx }) {
+
+export default function Vehicle({ readContracts, writeContracts, tokenId, roles, tx, localProvider, mainnetProvider }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [addPoliceRecordVisible, setAddPoliceRecordVisible] = useState(false);
@@ -139,6 +141,15 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles,
               />
             </Col>
           </Row>
+          <TokenEvents
+            tokenId={tokenId}
+            contracts={readContracts}
+            contractName="VehicleLifecycleToken"
+            eventName="Transfer"
+            localProvider={localProvider}
+            mainnetProvider={mainnetProvider}
+            startBlock={1}
+          />
         </div>
       )}
     </div>

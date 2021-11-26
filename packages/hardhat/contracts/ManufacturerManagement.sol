@@ -3,6 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./EntityManagement.sol";
 
+/// @title Manufacturer Management
+/// @author Andrei Zhozhin
+/// @notice This contract is used to manage Manufacturer entities
 abstract contract ManufacturerManagement is EntityManagement {
     mapping(address => Entity) private _manufacturers;
     mapping(uint256 => address) private _manufacturerIndex2Address;
@@ -24,12 +27,25 @@ abstract contract ManufacturerManagement is EntityManagement {
         );
     }
 
-    // we can change only metadataUri
+    function getManufacturers() public view returns (Entity[] memory) {
+        return
+            _getEntities(
+                _manufacturers,
+                _manufacturerIndex2Address,
+                manufacturerCount
+            );
+    }
+
     function _updateManufacturer(address addr, string memory metadataUri)
         internal
         exists(_manufacturers, addr)
     {
-        _updateEntity(EntityType.MANUFACTURER, _manufacturers, addr, metadataUri);
+        _updateEntity(
+            EntityType.MANUFACTURER,
+            _manufacturers,
+            addr,
+            metadataUri
+        );
     }
 
     function _suspendManufacturer(address addr)
@@ -44,21 +60,5 @@ abstract contract ManufacturerManagement is EntityManagement {
         exists(_manufacturers, addr)
     {
         _resumeEntity(EntityType.MANUFACTURER, _manufacturers, addr);
-    }
-
-    // function getManufacturer(address addr)
-    //     public
-    //     view
-    //     returns (Entity memory)
-    // {
-    //     return _getEntity(_manufacturers, addr);
-    // }
-
-    function getManufacturers()
-        public
-        view
-        returns (Entity[] memory)
-    {
-        return _getEntities(_manufacturers, _manufacturerIndex2Address, manufacturerCount);
     }
 }

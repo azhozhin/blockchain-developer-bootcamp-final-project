@@ -3,6 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./LifecycleAccessControl.sol";
 
+/// @title Police Department Capability
+/// @author Andrei Zhozhin
+/// @notice This contract allows to add police log entries and get list of log entries for vehicle
 abstract contract PoliceDepartmentCapability is LifecycleAccessControl {
 
     struct PoliceDepartmentLogEntry {

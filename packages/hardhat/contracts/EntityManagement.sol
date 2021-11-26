@@ -1,6 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+/// @title Entity Management
+/// @author Andrei Zhozhin
+/// @notice This contract is used by other entities to implement common logic
 abstract contract EntityManagement {
 
     enum EntityType {UNDEFINED, MANUFACTURER, SERVICE_FACTORY, POLICE}
@@ -20,7 +23,7 @@ abstract contract EntityManagement {
 
     modifier exists(mapping(address => Entity) storage entityMap, address addr) {
         Entity memory entity = entityMap[addr];
-        require(entity.addr != address(0), "NF"); // NF = Not found
+        require(entity.addr != address(0), "Entity does not exist");
         _;
     }
 

@@ -36,8 +36,6 @@ export default function Garage({ address, readContracts, writeContracts, handleC
   }, [address, readContracts, addNewVehicleFormVisible, transferVehicleFormVisible]);
 
   const onTokenIdClick = (event, tokenId) => {
-    event.stopPropagation();
-    console.log("onTokenIdClick called");
     handleChange(tokenId);
   };
 

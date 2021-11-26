@@ -78,6 +78,8 @@ export default function Home({
             writeContracts={writeContracts}
             tokenId={tokenId}
             roles={roles}
+            localProvider={localProvider}
+            mainnetProvider={mainnetProvider}
           />
         </TabPane>
         <TabPane tab="Manufacturers" key="manufacturers">
