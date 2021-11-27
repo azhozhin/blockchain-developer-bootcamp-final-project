@@ -13,7 +13,7 @@ describe("Government management", async () => {
   let manufacturerAccount;
   let serviceFactoryAccount;
   let policeDepartmentAccount;
-  let addrs;
+  
 
   var testCases = [
     {
@@ -53,13 +53,14 @@ describe("Government management", async () => {
   }
 
   beforeEach(async () => {
+    let other;
     [
       owner,
       govAccount,
       manufacturerAccount,
       serviceFactoryAccount,
       policeDepartmentAccount,
-      ...addrs
+      ...other
     ] = await ethers.getSigners();
     VehicleLifecycleToken = await ethers.getContractFactory(
       "VehicleLifecycleToken"

@@ -12,20 +12,18 @@ describe("Service Factory Capability", () => {
   let govAccount;
   let manufacturerAccount;
   let serviceFactoryAccount;
-  let policeDepartmentAccount;
-  let addrs;
-
+  
   beforeEach(async () => {
     VehicleLifecycleToken = await ethers.getContractFactory(
       "VehicleLifecycleToken"
     );
+    let other;
     [
       owner,
       govAccount,
       manufacturerAccount,
       serviceFactoryAccount,
-      policeDepartmentAccount,
-      ...addrs
+      ...other
     ] = await ethers.getSigners();
 
     instance = await VehicleLifecycleToken.deploy();
