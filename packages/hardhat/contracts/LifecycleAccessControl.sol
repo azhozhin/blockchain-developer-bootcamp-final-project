@@ -28,7 +28,8 @@ abstract contract LifecycleAccessControl is AccessControl {
         _;
     }
 
-    /// @notice Returns the amount of leaves the tree has.
+    /// @notice Returns the amount of leaves the tree has
+    /// @dev This is a helper method for UI only
     /// @param addr Address of participant to check permissions
     /// @return Pemissions structure with role flags
     function getRoles(address addr)

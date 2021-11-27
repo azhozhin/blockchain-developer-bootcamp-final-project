@@ -17,7 +17,7 @@ abstract contract ServiceFactoryManagement is EntityManagement {
         string memory metadataUri
     ) internal {
         serviceFactoryCount = _addEntity(
-            EntityType.MANUFACTURER,
+            EntityType.SERVICE_FACTORY,
             _serviceFactories,
             _serviceFactoryIndex2Address,
             serviceFactoryCount,

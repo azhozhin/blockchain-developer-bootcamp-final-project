@@ -36,6 +36,14 @@ abstract contract ManufacturerManagement is EntityManagement {
             );
     }
 
+    function getManufacturer(address addr)
+        public
+        view
+        returns (Entity memory)
+    {
+        return _manufacturers[addr];
+    }
+
     function _updateManufacturer(address addr, string memory metadataUri)
         internal
         exists(_manufacturers, addr)

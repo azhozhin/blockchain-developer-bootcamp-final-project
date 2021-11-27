@@ -17,7 +17,7 @@ abstract contract PoliceDepartmentManagement is EntityManagement {
         string memory metadataUri
     ) internal {
         policeDepartmentCount = _addEntity(
-            EntityType.MANUFACTURER,
+            EntityType.POLICE,
             _policeDepartments,
             _policeDepartment2Address,
             policeDepartmentCount,
