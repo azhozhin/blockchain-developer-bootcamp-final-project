@@ -1,69 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { Address } from "..";
-import { Table, Switch, Image, Button } from "antd";
-import axios from "axios";
+import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
-import { entityType, executeMethod } from "../../helpers/entityHelper";
+import {
+  deserializePoliceDepartmentMetadata,
+  entityType,
+  executeMethod,
+  loadEntities,
+} from "../../helpers/entityHelper";
 import AddPoliceDepartmentForm from "./AddPoliceDepartmentForm";
 
-export default function PoliceDepartments({ readContracts, writeContracts, tx, roles, pinataApi }) {
-  const [data, setData] = useState();
-  const [visible, setVisible] = useState(false);
+export default function PoliceDepartments({ address, readContracts, writeContracts, tx, roles, pinataApi }) {
   const [loading, setLoading] = useState(false);
+  const [policeDepartments, setPoliceDepartments] = useState();
   const [loadingArray, setLoadingArray] = useState({});
+  const [addr2indexMapping, setAddr2indexMapping] = useState({});
 
-  useEffect(() => {
-    setLoading(true);
-  }, []);
+  const [addPoliceDepartmentFormVisible, setAddPoliceDepartmentFormVisible] = useState(false);
 
   useEffect(() => {
     async function getPoliceDepartments() {
       if (readContracts && readContracts.VehicleLifecycleToken) {
-        console.log("refresh police departments");
         setLoading(true);
-        const newData = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
-        const list = [];
-        const results = [];
+        const newPoliceDepartments = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
+        const [newList, addr2index] = await loadEntities(newPoliceDepartments, deserializePoliceDepartmentMetadata);
 
-        newData.forEach(function (obj, i) {
-          list.push(
-            axios.get(obj.metadataUri).then(function (res) {
-              results[i] = res.data;
-            }),
-          );
-          setLoadingArray(prevState => ({
-            ...prevState,
-            [obj.addr]: false,
-          }));
-        });
-
-        await Promise.all(list);
-        const dt = [];
-        newData.forEach((el, i) => {
-          const attrs = results[i].attributes
-            ? Object.assign({}, ...results[i].attributes.map(x => ({ [x.attr_type]: x.value })))
-            : {};
-          dt.push({
-            addr: el.addr,
-            name: el.name,
-            state: el.state,
-            metadataUri: el.metadataUri,
-            imageUri: results[i].image,
-            description: results[i].description,
-            externalUri: results[i].external_uri,
-            address: {
-              addressLine: attrs.address_line,
-              postalCode: attrs.postal_code,
-              country: attrs.country,
-            },
-          });
-        });
-        setData(dt);
+        setPoliceDepartments(newList);
+        setAddr2indexMapping(addr2index);
         setLoading(false);
       }
     }
     getPoliceDepartments();
-  }, [readContracts, tx]);
+  }, [address]);
+
+  const onPoliceDepartmentChangeState = async record => {
+    setLoadingArray(prevState => ({
+      ...prevState,
+      [record.addr]: true,
+    }));
+    await executeMethod(
+      tx,
+      record.state == 1
+        ? writeContracts.VehicleLifecycleToken.disable(entityType.POLICE, record.addr)
+        : writeContracts.VehicleLifecycleToken.enable(entityType.POLICE, record.addr),
+      () => {
+        const idx = addr2indexMapping[record.addr];
+        const newPoliceDepartments = [...policeDepartments];
+        newPoliceDepartments[idx] = { ...newPoliceDepartments[idx], state: record.state == 1 ? 0 : 1 };
+        setPoliceDepartments(newPoliceDepartments);
+        setLoadingArray(prevState => ({
+          ...prevState,
+          [record.addr]: false,
+        }));
+      },
+      () => {
+        setLoadingArray(prevState => ({
+          ...prevState,
+          [record.addr]: false,
+        }));
+      },
+    );
+  };
 
   const columns = [
     {
@@ -112,20 +109,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           allowed={roles && roles.isGovernment}
           loading={loadingArray[record.addr]}
           onChange={async () => {
-            setLoadingArray(prevState => ({
-              ...prevState,
-              [record.addr]: true,
-            }));
-            const result = await executeMethod(
-              tx,
-              state == 1
-                ? writeContracts.VehicleLifecycleToken.disable(entityType.POLICE, record.addr)
-                : writeContracts.VehicleLifecycleToken.enable(entityType.POLICE, record.addr),
-            );
-            setLoadingArray(prevState => ({
-              ...prevState,
-              [record.addr]: false,
-            }));
+            await onPoliceDepartmentChangeState(record);
           }}
         />
       ),
@@ -151,22 +135,28 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
   ];
 
   const showAddPoliceDepartmentForm = () => {
-    setVisible(true);
+    setAddPoliceDepartmentFormVisible(true);
   };
 
   return (
     <>
-      <Table rowKey={record => record.addr} dataSource={data} columns={columns} loading={loading} />
+      <Table
+        rowKey={record => record.addr}
+        dataSource={policeDepartments}
+        columns={columns}
+        loading={loading}
+        pagination={{ pageSize: 4 }}
+      />
       {roles && (
-        <Button type="primary" disabled={!roles.isGovernment} onClick={showAddPoliceDepartmentForm}>
+        <Button type="primary" disabled={!roles.isGovernment} onClick={showAddPoliceDepartmentForm} loading={loading}>
           Add Police Department
         </Button>
       )}
 
       <AddPoliceDepartmentForm
         tx={tx}
-        visible={visible}
-        setVisible={setVisible}
+        visible={addPoliceDepartmentFormVisible}
+        setVisible={setAddPoliceDepartmentFormVisible}
         pinataApi={pinataApi}
         writeContracts={writeContracts}
       />

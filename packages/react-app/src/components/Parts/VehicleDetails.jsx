@@ -6,8 +6,9 @@ import PoliceRecords from "./PoliceRecords";
 import AddPoliceRecordForm from "./AddPoliceRecordForm";
 import AddServiceRecordForm from "./AddServiceRecordForm";
 import TokenEvents from "../TokenEvents";
+import { deserializeVehicleMetadata } from "../../helpers/entityHelper";
 
-export default function Vehicle({ readContracts, writeContracts, tokenId, roles, tx, localProvider, mainnetProvider }) {
+export default function Vehicle({ address, readContracts, writeContracts, tokenId, roles, tx, localProvider, mainnetProvider }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [addPoliceRecordVisible, setAddPoliceRecordVisible] = useState(false);
@@ -24,21 +25,8 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles,
 
         const res = await axios.get(metadataUri);
         const metadata = res.data;
+        const vehicle = deserializeVehicleMetadata(newData, metadata);
 
-        const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
-        const o = {
-          tokenId: newData.tokenId.toString(),
-          vin: newData.vin,
-          make: newData.make,
-          model: newData.model,
-          color: newData.color,
-          year: newData.year,
-          maxMileage: newData.maxMileage,
-          engineSize: newData.engineSize,
-          imageUri: metadata.image,
-          description: metadata.description,
-          externalUri: metadata.externalUri,
-        };
         const properties = [
           { name: "tokenId", value: newData.tokenId.toString() },
           { name: "vin", value: newData.vin },
@@ -52,12 +40,12 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles,
         setDescription(metadata.description);
         setProperties(properties);
 
-        setData(o);
+        setData(vehicle);
         setLoading(false);
       }
     }
     getVehicle();
-  }, [tokenId, readContracts, addPoliceRecordVisible, addServiceRecordVisible]);
+  }, [tokenId, address]);
 
   const showAddPoliceRecord = () => {
     setAddPoliceRecordVisible(true);
@@ -87,7 +75,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles,
         <div>
           <Row gutter={16}>
             <Col span={12}>
-              <Image src={data.imageUri} loading={loading} />
+              <Image src={data.imageUri} />
               <h3>Description</h3>
               {description}
             </Col>

@@ -73,6 +73,7 @@ export default function Home({
         </TabPane>
         <TabPane tab="Vehicle" key="vehicle">
           <VehicleDetails
+            address={address}
             tx={tx}
             readContracts={readContracts}
             writeContracts={writeContracts}
@@ -84,6 +85,7 @@ export default function Home({
         </TabPane>
         <TabPane tab="Manufacturers" key="manufacturers">
           <Manufacturers
+            address={address}
             readContracts={readContracts}
             writeContracts={writeContracts}
             tx={tx}
@@ -93,6 +95,7 @@ export default function Home({
         </TabPane>
         <TabPane tab="Service Factories" key="serviceFactories">
           <ServiceFactories
+            address={address}
             readContracts={readContracts}
             writeContracts={writeContracts}
             tx={tx}
@@ -102,6 +105,7 @@ export default function Home({
         </TabPane>
         <TabPane tab="Police Departments" key="policeDepartments">
           <PoliceDepartments
+            address={address}
             readContracts={readContracts}
             writeContracts={writeContracts}
             tx={tx}

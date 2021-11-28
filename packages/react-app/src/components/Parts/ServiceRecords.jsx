@@ -9,17 +9,20 @@ export default function ServiceRecords({ readContracts, tokenId, refreshTrigger 
   const [serviceFactoryMap, setServiceFactoryMap] = useState({});
 
   useEffect(() => {
-    setLoading(true);
+    async function getServiceFactories() {
+      if (readContracts && readContracts.VehicleLifecycleToken) {
+        const serviceFactories = await readContracts.VehicleLifecycleToken.getServiceFactories();
+        const sfm = Object.assign({}, ...serviceFactories.map(x => ({ [x.addr]: x.name })));
+        setServiceFactoryMap(sfm);
+      }
+    }
+    getServiceFactories();
   }, []);
 
   useEffect(() => {
     async function getReferenceData() {
       if (tokenId && readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
-        const serviceFactories = await readContracts.VehicleLifecycleToken.getServiceFactories();
-        const sfm = Object.assign({}, ...serviceFactories.map(x => ({ [x.addr]: x.name })));
-        setServiceFactoryMap(sfm);
-
         const rawServiceLogs = await readContracts.VehicleLifecycleToken.getServiceLogEntries(tokenId);
         const serviceLogs = [];
         for (const log of rawServiceLogs) {
@@ -42,7 +45,7 @@ export default function ServiceRecords({ readContracts, tokenId, refreshTrigger 
       }
     }
     getReferenceData();
-  }, [readContracts, tokenId, refreshTrigger]);
+  }, [tokenId, refreshTrigger]);
 
   const columns = [
     {

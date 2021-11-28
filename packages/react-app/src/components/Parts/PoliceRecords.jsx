@@ -8,17 +8,20 @@ export default function PoliceRecords({ tokenId, readContracts, refreshTrigger }
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
+    async function getPoliceDepartments() {
+      if (tokenId && readContracts && readContracts.VehicleLifecycleToken) {
+        const policeDepartments = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
+        const pdm = Object.assign({}, ...policeDepartments.map(x => ({ [x.addr]: x.name })));
+        setPoliceDepartmentMap(pdm);
+      }
+    }
+    getPoliceDepartments();
   }, []);
 
   useEffect(() => {
     async function getReferenceData() {
       if (tokenId && readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
-        const policeDepartments = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
-        const pdm = Object.assign({}, ...policeDepartments.map(x => ({ [x.addr]: x.name })));
-        setPoliceDepartmentMap(pdm);
-
         const rawPoliceLogs = await readContracts.VehicleLifecycleToken.getPoliceLogEntries(tokenId);
         const policeLogs = [];
         for (const log of rawPoliceLogs) {
@@ -33,12 +36,11 @@ export default function PoliceRecords({ tokenId, readContracts, refreshTrigger }
           });
         }
         setLogs(policeLogs);
-
         setLoading(false);
       }
     }
     getReferenceData();
-  }, [readContracts, tokenId, refreshTrigger]);
+  }, [tokenId, refreshTrigger]);
 
   const columns = [
     {

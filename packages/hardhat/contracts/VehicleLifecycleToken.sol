@@ -72,7 +72,7 @@ contract VehicleLifecycleToken is
         string memory tokenUri
     ) public only(MANUFACTURER) returns (uint256) {
         
-        // TODO: check that tokenUri starts with https://ipfs.io/ipfs/ to enforce metadata location
+        // TODO: check that tokenUri starts with ipfs:// to enforce metadata location
 
         _tokenIds.increment();
 

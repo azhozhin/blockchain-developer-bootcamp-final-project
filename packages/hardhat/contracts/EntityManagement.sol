@@ -104,3 +104,4 @@ abstract contract EntityManagement {
         emit EntityResumed(type_, addr, entity.name);
     }
 }
+

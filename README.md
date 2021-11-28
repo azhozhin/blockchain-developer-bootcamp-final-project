@@ -62,7 +62,7 @@ Owner could be deployer and it can assign first `admin` (Government) that can in
 
 ## Distribution
 
-IPFS is use everywhere to store information off-chain. For all entities metadataUri stored on-chain, and file itself is stored on IPFS thus all associated information is protected from forgery as well.
+IPFS is used everywhere to store information off-chain. For all entities metadataUri stored on-chain, and file itself is stored on IPFS thus all associated information is protected from forgery as well.
 
 Because data is spread between on-chain and off-chain there should be some logic implemented in UI client that would assemble all pieces and present as full picture to the user. But it is not a mandatory requirement the system could operate with on-chain only data, but in this case user experience would be below expectations.
 

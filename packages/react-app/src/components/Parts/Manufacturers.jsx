@@ -1,67 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { Address } from "..";
-import { Table, Switch, Image, Button } from "antd";
-import axios from "axios";
+import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
-import { entityType, executeMethod } from "../../helpers/entityHelper";
+import { deserializeManufacturerMetadata, entityType, executeMethod, loadEntities } from "../../helpers/entityHelper";
 
-export default function Manufacturers({ readContracts, writeContracts, roles, tx }) {
-  const [data, setData] = useState();
+export default function Manufacturers({ address, readContracts, writeContracts, roles, tx }) {
+  const [loading, setLoading] = useState(false);
+  const [manufacturers, setManufacturers] = useState();
   const [loadingArray, setLoadingArray] = useState({});
+  const [addr2indexMapping, setAddr2indexMapping] = useState({});
 
   useEffect(() => {
     async function getManufacturers() {
-      if (roles && readContracts && readContracts.VehicleLifecycleToken) {
-        const newData = await readContracts.VehicleLifecycleToken.getManufacturers();
-        newData.forEach(function (obj, i) {
-          setLoadingArray(prevState => ({
-            ...prevState,
-            [obj.addr]: false,
-          }));
-        });
+      if (readContracts && readContracts.VehicleLifecycleToken) {
+        setLoading(true);
+        const newManufacturers = await readContracts.VehicleLifecycleToken.getManufacturers();
+        const [newList, addr2index] = await loadEntities(newManufacturers, deserializeManufacturerMetadata);
+
+        setManufacturers(newList);
+        setAddr2indexMapping(addr2index);
+        setLoading(false);
       }
     }
     getManufacturers();
-  }, []);
+  }, [address]);
 
-  useEffect(() => {
-    async function getManufacturers() {
-      if (roles && readContracts && readContracts.VehicleLifecycleToken) {
-        const newData = await readContracts.VehicleLifecycleToken.getManufacturers();
-        const list = [];
-        const results = [];
+  const onManufacturerChangeState = async record => {
+    setLoadingArray(prevState => ({
+      ...prevState,
+      [record.addr]: true,
+    }));
+    await executeMethod(
+      tx,
+      record.state == 1
+        ? writeContracts.VehicleLifecycleToken.disable(entityType.MANUFACTURER, record.addr)
+        : writeContracts.VehicleLifecycleToken.enable(entityType.MANUFACTURER, record.addr),
+      () => {
+        const idx = addr2indexMapping[record.addr];
+        const newManufacturers = [...manufacturers];
+        newManufacturers[idx] = { ...newManufacturers[idx], state: record.state == 1 ? 0 : 1 };
+        setManufacturers(newManufacturers);
+        setLoadingArray(prevState => ({
+          ...prevState,
+          [record.addr]: false,
+        }));
+      },
+      () => {
+        setLoadingArray(prevState => ({
+          ...prevState,
+          [record.addr]: false,
+        }));
+      },
+    );
+  };
 
-        newData.forEach(function (obj, i) {
-          list.push(
-            axios.get(obj.metadataUri).then(function (res) {
-              results[i] = res.data;
-            }),
-          );
-        });
-
-        Promise.all(list) // (4)
-          .then(function () {
-            const dt = [];
-            newData.forEach((el, i) => {
-              const attrs = Object.assign({}, ...results[i].attributes.map(x => ({ [x.attr_type]: x.value })));
-              dt.push({
-                addr: el.addr,
-                name: el.name,
-                state: el.state,
-                metadataUri: el.metadataUri,
-                imageUri: results[i].image,
-                description: results[i].description,
-                externalUri: results[i].external_uri,
-              });
-            });
-            setData(dt);
-          });
-      }
-    }
-    getManufacturers();
-  }, [tx, roles, readContracts, writeContracts]);
-  //const data = ;
-  //console.log(data);
   const columns = [
     {
       title: "Logo",
@@ -97,20 +89,7 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
           allowed={roles.isGovernment}
           loading={loadingArray[record.addr]}
           onChange={async () => {
-            setLoadingArray(prevState => ({
-              ...prevState,
-              [record.addr]: true,
-            }));
-            const result = await executeMethod(
-              tx,
-              state == 1
-                ? writeContracts.VehicleLifecycleToken.disable(entityType.MANUFACTURER, record.addr)
-                : writeContracts.VehicleLifecycleToken.enable(entityType.MANUFACTURER, record.addr),
-            );
-            setLoadingArray(prevState => ({
-              ...prevState,
-              [record.addr]: false,
-            }));
+            await onManufacturerChangeState(record);
           }}
         />
       ),
@@ -136,12 +115,12 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
   ];
   return (
     <>
-      {data && (
+      {manufacturers && (
         <div>
-          <Table rowKey={record => record.addr} dataSource={data} columns={columns} />
+          <Table rowKey={record => record.addr} dataSource={manufacturers} columns={columns} loading={loading} />
         </div>
       )}
-      <Button type="primary" disabled={!roles.isGovernment}>
+      <Button type="primary" disabled={!roles.isGovernment} loading={loading}>
         Add Manufacturer
       </Button>
     </>

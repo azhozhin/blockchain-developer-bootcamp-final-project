@@ -26,15 +26,19 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, writeCont
     setConfirmLoading(true);
     const fields = form.getFieldsValue();
     fields.imageUri = fileList[0].originFileObj.url;
-    [obj, jsonName] = serializePoliceDepartmentMetadata(fields);
+    const [obj, jsonName] = serializePoliceDepartmentMetadata(fields);
     const data = await pinataApi.pinJsonToIpfs(obj, jsonName);
     const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
     try {
       const result = await executeMethod(
         tx,
         writeContracts.VehicleLifecycleToken.add(entityType.POLICE, fields.addr, fields.name, metadataUri),
+        () => {
+          setVisible(false);
+        },
+        () => {},
       );
-      setVisible(false);
+
       form.resetFields();
     } catch (e) {
       console.log(e);

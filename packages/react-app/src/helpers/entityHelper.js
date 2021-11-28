@@ -1,4 +1,5 @@
 import slugify from "slugify";
+import axios from "axios";
 
 export const entityType = {
   UNDEFINED: 0,
@@ -7,14 +8,16 @@ export const entityType = {
   POLICE: 3,
 };
 
-export const executeMethod = async (tx, fun) => {
+export const executeMethod = async (tx, fun, onSuccess, onError) => {
   const result = tx(fun, update => {
     console.log("📡 Transaction Update:", update);
     if (update && (update.status === "confirmed" || update.status === 1)) {
-      console.log("Transaction " + update.hash + " finished!");
+      onSuccess && onSuccess(update);
+    } else {
+      onError && onError(update);
     }
   });
-  console.log("awaiting metamask/web3 confirm result...", result);
+  //console.log("awaiting metamask/web3 confirm result...", result);
   return result;
 };
 
@@ -83,6 +86,98 @@ export const serializeVehicleMetadata = fields => {
   return [obj, name];
 };
 
-export const deserializePoliceDepartmentMetadata = metadata => {};
-export const deserializeManufacturerMetadata = metadata => {};
-export const deserializeServiceFactoryMetadata = metadata => {};
+export const deserializePoliceDepartmentMetadata = (el, metadata) => {
+  const attrs = metadata.attributes
+    ? Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })))
+    : {};
+  const obj = {
+    addr: el.addr,
+    name: el.name,
+    state: el.state,
+    metadataUri: el.metadataUri,
+    imageUri: metadata.image,
+    description: metadata.description,
+    externalUri: metadata.external_uri,
+    address: {
+      addressLine: attrs.address_line,
+      postalCode: attrs.postal_code,
+      country: attrs.country,
+    },
+  };
+  return obj;
+};
+
+export const deserializeManufacturerMetadata = (el, metadata) => {
+  const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
+  const obj = {
+    addr: el.addr,
+    name: el.name,
+    state: el.state,
+    metadataUri: el.metadataUri,
+    imageUri: metadata.image,
+    description: metadata.description,
+    externalUri: metadata.external_uri,
+  };
+  return obj;
+};
+
+export const deserializeServiceFactoryMetadata = (data, metadata) => {
+  const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
+  const obj = {
+    addr: data.addr,
+    name: data.name,
+    state: data.state,
+    metadataUri: data.metadataUri,
+    imageUri: metadata.image,
+    description: metadata.description,
+    externalUri: metadata.external_uri,
+    address: {
+      addressLine: attrs.address_line,
+      postalCode: attrs.postal_code,
+      country: attrs.country,
+    },
+  };
+  return obj;
+};
+
+export const deserializeVehicleMetadata = (data, metadata) => {
+  const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
+  const obj = {
+    tokenId: data.tokenId.toString(),
+    vin: data.vin,
+    make: data.make,
+    model: data.model,
+    color: data.color,
+    year: data.year,
+    maxMileage: data.maxMileage,
+    engineSize: data.engineSize,
+    imageUri: metadata.image,
+    description: metadata.description,
+    externalUri: metadata.externalUri,
+  };
+  return obj;
+};
+
+export const loadEntities = async (entityList, deserialize) => {
+  const metadataRequests = [];
+  const metadataContents = [];
+
+  entityList.forEach((el, i) => {
+    metadataRequests.push(
+      axios.get(el.metadataUri).then(function (res) {
+        metadataContents[i] = res.data;
+      }),
+    );
+  });
+
+  await Promise.all(metadataRequests);
+
+  const entities = [];
+  const addr2index = {};
+  entityList.forEach((entity, i) => {
+    const deserializedEntity = deserialize(entity, metadataContents[i]);
+    entities.push(deserializedEntity);
+    addr2index[deserializedEntity.addr] = i;
+  });
+  return [entities, addr2index];
+};

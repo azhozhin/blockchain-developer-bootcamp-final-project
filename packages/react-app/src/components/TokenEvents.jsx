@@ -2,36 +2,40 @@ import { List, Table } from "antd";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Address } from "../components";
 
-export default function TokenEvents({ contracts, contractName, eventName, localProvider, mainnetProvider, startBlock, tokenId }) {
+export default function TokenEvents({
+  contracts,
+  contractName,
+  eventName,
+  localProvider,
+  mainnetProvider,
+  startBlock,
+  tokenId,
+}) {
   // 📟 Listen for broadcast events
   const events = useEventListener(contracts, contractName, eventName, localProvider, startBlock);
 
   const columns = [
     {
-        title: "Property",
-        dataIndex: "tokenId",
-        key: "tokenId",
-        width: "120px",
-        render: (tokenId, record)=>
-          <div>{record.args.tokenId.toString()}</div>
-      },
+      title: "Property",
+      dataIndex: "tokenId",
+      key: "tokenId",
+      width: "120px",
+      render: (tokenId, record) => <div>{record.args.tokenId.toString()}</div>,
+    },
     {
       title: "Property",
       dataIndex: "from",
       key: "from",
       width: "120px",
-      render: (from, record)=>
-        <div>{record.args.from}</div>
+      render: (from, record) => <div>{record.args.from}</div>,
     },
     {
       title: "Value",
       dataIndex: "to",
       key: "to",
-      render: (to, record)=>
-        <div>{record.args.to}</div>
+      render: (to, record) => <div>{record.args.to}</div>,
     },
   ];
-
 
   return (
     <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>

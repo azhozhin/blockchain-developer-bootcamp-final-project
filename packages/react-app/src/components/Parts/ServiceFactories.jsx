@@ -1,65 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { Address } from "..";
-import { Table, Switch, Image, Button } from "antd";
-import axios from "axios";
+import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
-import { entityType, executeMethod } from "../../helpers/entityHelper";
+import { deserializeServiceFactoryMetadata, entityType, executeMethod, loadEntities } from "../../helpers/entityHelper";
 
-export default function PoliceDepartments({ readContracts, writeContracts, tx, roles }) {
-  const [data, setData] = useState();
+export default function ServiceFactories({ address, readContracts, writeContracts, tx, roles }) {
+  const [serviceFactories, setServiceFactories] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingArray, setLoadingArray] = useState({});
-
-  useEffect(() => {
-    setLoading(true);
-  }, []);
+  const [addr2indexMapping, setAddr2indexMapping] = useState({});
 
   useEffect(() => {
     async function getServiceFactories() {
       if (roles && readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
-        const newData = await readContracts.VehicleLifecycleToken.getServiceFactories();
-        const list = [];
-        const results = [];
+        const newServiceFactories = await readContracts.VehicleLifecycleToken.getServiceFactories();
+        const [newList, addr2index] = await loadEntities(newServiceFactories, deserializeServiceFactoryMetadata);
 
-        newData.forEach(function (obj, i) {
-          list.push(
-            axios.get(obj.metadataUri).then(function (res) {
-              results[i] = res.data;
-            }),
-          );
-        });
-
-        Promise.all(list) // (4)
-          .then(function () {
-            const dt = [];
-            newData.forEach((el, i) => {
-              const attrs = Object.assign({}, ...results[i].attributes.map(x => ({ [x.attr_type]: x.value })));
-              dt.push({
-                addr: el.addr,
-                name: el.name,
-                state: el.state,
-                metadataUri: el.metadataUri,
-                imageUri: results[i].image,
-                description: results[i].description,
-                externalUri: results[i].external_uri,
-                address: {
-                  addressLine: attrs.address_line,
-                  postalCode: attrs.postal_code,
-                  country: attrs.country,
-                },
-              });
-            });
-            setData(dt);
-            setLoading(false);
-          });
+        setServiceFactories(newList);
+        setAddr2indexMapping(addr2index);
+        setLoading(false);
       }
     }
     getServiceFactories();
-  }, [tx, roles, readContracts, writeContracts]);
+  }, [address]);
 
-  //const data = ;
-  //console.log(data);
+  const onServiceFactoryChangeState = async record => {
+    setLoadingArray(prevState => ({
+      ...prevState,
+      [record.addr]: true,
+    }));
+    await executeMethod(
+      tx,
+      record.state == 1
+        ? writeContracts.VehicleLifecycleToken.disable(entityType.SERVICE_FACTORY, record.addr)
+        : writeContracts.VehicleLifecycleToken.enable(entityType.SERVICE_FACTORY, record.addr),
+      () => {
+        const idx = addr2indexMapping[record.addr];
+        const newServiceFactories = [...serviceFactories];
+        newServiceFactories[idx] = { ...newServiceFactories[idx], state: record.state == 1 ? 0 : 1 };
+        setServiceFactories(newServiceFactories);
+        setLoadingArray(prevState => ({
+          ...prevState,
+          [record.addr]: false,
+        }));
+      },
+      () => {
+        setLoadingArray(prevState => ({
+          ...prevState,
+          [record.addr]: false,
+        }));
+      },
+    );
+  };
+
   const columns = [
     {
       title: "Logo",
@@ -107,20 +101,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
           allowed={roles.isGovernment}
           loading={loadingArray[record.addr]}
           onChange={async () => {
-            setLoadingArray(prevState => ({
-              ...prevState,
-              [record.addr]: true,
-            }));
-            const result = await executeMethod(
-              tx,
-              state == 1
-                ? writeContracts.VehicleLifecycleToken.disable(entityType.SERVICE_FACTORY, record.addr)
-                : writeContracts.VehicleLifecycleToken.enable(entityType.SERVICE_FACTORY, record.addr),
-            );
-            setLoadingArray(prevState => ({
-              ...prevState,
-              [record.addr]: false,
-            }));
+            await onServiceFactoryChangeState(record);
           }}
         />
       ),
@@ -147,9 +128,9 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
   return (
     <>
       <div>
-        <Table rowKey={record => record.addr} dataSource={data} columns={columns} loading={loading} />
+        <Table rowKey={record => record.addr} dataSource={serviceFactories} columns={columns} loading={loading} />
       </div>
-      <Button type="primary" disabled={!roles.isGovernment}>
+      <Button type="primary" disabled={!roles.isGovernment} loading={loading}>
         Add Service Factory
       </Button>
     </>

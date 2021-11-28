@@ -25,7 +25,7 @@ abstract contract GovernmentManagement is
         public
         only(GOVERNMENT)
     {
-        // TODO: check that metadataUri starts with https://ipfs.io/ipfs/ to enforce metadata location
+        // TODO: check that metadataUri starts with ipfs:// to enforce metadata location
 
         if (type_==EntityType.MANUFACTURER){
             _addManufacturer(addr, name, metadataUri);
