@@ -10,17 +10,13 @@ describe("VehicleLifecycleToken contract", () => {
   let instance;
   let owner;
   let govAccount;
-  
+
   beforeEach(async () => {
     VehicleLifecycleToken = await ethers.getContractFactory(
       "VehicleLifecycleToken"
     );
     let other;
-    [
-      owner,
-      govAccount,
-      ...other
-    ] = await ethers.getSigners();
+    [owner, govAccount, ...other] = await ethers.getSigners();
     instance = await VehicleLifecycleToken.deploy();
   });
 
@@ -39,18 +35,29 @@ describe("VehicleLifecycleToken contract", () => {
     it("Should set government role", async () => {
       // check default permissions
       const rolesBefore = await instance.getRoles(govAccount.address);
-      expect(rolesBefore.isGovernment).to.be.equal(false);
-      expect(rolesBefore.isManufacturer).to.be.equal(false);
-      expect(rolesBefore.isServiceFactory).to.be.equal(false);
-      expect(rolesBefore.isPolice).to.be.equal(false);
+      expectRolesToMatch(rolesBefore, {
+        isGovernment: false,
+        isManufacturer: false,
+        isServiceFactory: false,
+        isPolice: false,
+      });
 
       // Act
       await instance.setAdminRole(govAccount.address);
       const rolesAfter = await instance.getRoles(govAccount.address);
-      expect(rolesAfter.isGovernment).to.be.equal(true);
-      expect(rolesAfter.isManufacturer).to.be.equal(false);
-      expect(rolesAfter.isServiceFactory).to.be.equal(false);
-      expect(rolesAfter.isPolice).to.be.equal(false);
+      expectRolesToMatch(rolesAfter, {
+        isGovernment: true,
+        isManufacturer: false,
+        isServiceFactory: false,
+        isPolice: false,
+      });
     });
   });
 });
+
+const expectRolesToMatch = (actual, expected) => {
+  expect(actual.isGovernment).to.be.equal(expected.isGovernment);
+  expect(actual.isManufacturer).to.be.equal(expected.isManufacturer);
+  expect(actual.isServiceFactory).to.be.equal(expected.isServiceFactory);
+  expect(actual.isPolice).to.be.equal(expected.isPolice);
+};

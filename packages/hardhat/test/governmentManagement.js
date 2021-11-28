@@ -2,6 +2,7 @@ const { ethers, artifacts } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const faker = require("faker");
+const { entityType, entityState } = require("./testHelpers");
 
 use(solidity);
 
@@ -17,21 +18,21 @@ describe("Government management", async () => {
   var testCases = [
     {
       entityType: "Manufacturer",
-      entityTypeId: 1,
+      entityTypeId: entityType.MANUFACTURER,
       targetAccount: manufacturerAccount,
       getEntities: async () => instance.getManufacturers(),
       hasRole: (roles) => roles.isManufacturer,
     },
     {
       entityType: "ServiceFactory",
-      entityTypeId: 2,
+      entityTypeId: entityType.SERVICE_FACTORY,
       targetAccount: serviceFactoryAccount,
       getEntities: async () => instance.getServiceFactories(),
       hasRole: (roles) => roles.isServiceFactory,
     },
     {
       entityType: "PoliceDepartment",
-      entityTypeId: 3,
+      entityTypeId: entityType.POLICE,
       targetAccount: policeDepartmentAccount,
       getEntities: async () => instance.getPoliceDepartments(),
       hasRole: (roles) => roles.isPolice,
@@ -40,11 +41,11 @@ describe("Government management", async () => {
 
   function getTargetAccount(entityTypeId) {
     switch (entityTypeId) {
-      case 1:
+      case entityType.MANUFACTURER:
         return manufacturerAccount;
-      case 2:
+      case entityType.SERVICE_FACTORY:
         return serviceFactoryAccount;
-      case 3:
+      case entityType.POLICE:
         return policeDepartmentAccount;
       default:
         throw `Unexpected entityTypeId: '${entityTypeId}'`;
@@ -93,7 +94,7 @@ describe("Government management", async () => {
         expect(entity.name).to.be.equal(name);
         expect(entity.addr).to.be.equal(targetAccount.address);
         expect(entity.metadataUri).to.be.equal(url);
-        expect(entity.state).to.be.equal(1);
+        expect(entity.state).to.be.equal(entityState.ACTIVE);
       });
 
       it(`Should set correct permissions and emit event`, async () => {
@@ -138,6 +139,10 @@ describe("Government management", async () => {
 
         let resultAfter = await instance.getRoles(targetAccount.address);
         expect(testCase.hasRole(resultAfter)).to.be.false;
+
+        let entities = await testCase.getEntities();
+        const entity = entities[0];
+        expect(entity.state).to.be.equal(entityState.SUSPENDED);
       });
     });
 
@@ -153,7 +158,7 @@ describe("Government management", async () => {
         await instance
           .connect(govAccount)
           .disable(entityTypeId, targetAccount.address);
-        let resultBefore = await instance.getRoles(targetAccount.address);
+        const resultBefore = await instance.getRoles(targetAccount.address);
         expect(testCase.hasRole(resultBefore)).to.be.false;
 
         // Act
@@ -165,8 +170,12 @@ describe("Government management", async () => {
           .to.emit(instance, "EntityResumed")
           .withArgs(entityTypeId, targetAccount.address, name);
 
-        let resultAfter = await instance.getRoles(targetAccount.address);
+        const resultAfter = await instance.getRoles(targetAccount.address);
         expect(testCase.hasRole(resultAfter)).to.be.true;
+
+        let entities = await testCase.getEntities();
+        const entity = entities[0];
+        expect(entity.state).to.be.equal(entityState.ACTIVE);
       });
     });
   });

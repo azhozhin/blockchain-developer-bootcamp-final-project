@@ -2,7 +2,7 @@ const { ethers, artifacts } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const faker = require("faker");
-const { entityType } = require("./testHelpers");
+const { entityType, errorMessages } = require("./testHelpers");
 
 use(solidity);
 
@@ -90,6 +90,47 @@ describe("Police Department Capability", () => {
       expect(date).to.be.greaterThan(now);
       expect(logEntry.principal).to.be.equal(policeDepartmentAccount.address);
       expect(logEntry.recordUri).to.be.equal(recordUri);
+    });
+
+    it("Should not allow to add new entry for disabled police department", async () => {
+      const recordUri = faker.internet.url();
+      await instance
+        .connect(govAccount)
+        .disable(entityType.POLICE, policeDepartmentAccount.address);
+
+      //Act
+      await expect(
+        instance.connect(serviceFactoryAccount).addPoliceLogEntry(1, recordUri)
+      ).to.be.revertedWith(errorMessages.NOT_ALLOWED);
+    });
+
+    it("Should be allowed to add new entry for disabled and enabled again police department", async () => {
+      const recordUri = faker.internet.url();
+      await instance
+        .connect(govAccount)
+        .disable(entityType.POLICE, policeDepartmentAccount.address);
+      await instance
+        .connect(govAccount)
+        .enable(entityType.POLICE, policeDepartmentAccount.address);
+
+      //Act
+      await instance
+        .connect(policeDepartmentAccount)
+        .addPoliceLogEntry(1, recordUri);
+
+      const logEntriesAfter = await instance.getPoliceLogEntries(1);
+      expect(logEntriesAfter.length).to.be.equal(1);
+    });
+
+    it("Should be not allowed to add police log entries without permissions", async () => {
+      const recordUri = faker.internet.url();
+      // Act
+      await expect(
+        // service factory is not allowed to add police department logs, only to service logs
+        instance
+          .connect(serviceFactoryAccount)
+          .addPoliceLogEntry(1, recordUri)
+      ).to.be.revertedWith(errorMessages.NOT_ALLOWED);
     });
   });
 });

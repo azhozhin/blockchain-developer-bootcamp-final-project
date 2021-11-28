@@ -6,6 +6,7 @@ const {
   createVehicle,
   manufactureVehicle,
   entityType,
+  errorMessages,
 } = require("./testHelpers");
 
 use(solidity);
@@ -16,20 +17,15 @@ describe("Manufacturer Capability", async () => {
   let owner;
   let govAccount;
   let manufacturerAccount;
+  let serviceFactoryAccount;
 
   beforeEach(async () => {
     VehicleLifecycleToken = await ethers.getContractFactory(
       "VehicleLifecycleToken"
     );
     let other;
-    [
-      owner,
-      govAccount,
-      manufacturerAccount,
-      serviceFactoryAccount,
-      policeDepartmentAccount,
-      ...other
-    ] = await ethers.getSigners();
+    [owner, govAccount, manufacturerAccount, serviceFactoryAccount, ...other] =
+      await ethers.getSigners();
 
     instance = await VehicleLifecycleToken.deploy();
     await instance.setAdminRole(govAccount.address);
@@ -58,7 +54,7 @@ describe("Manufacturer Capability", async () => {
         .withArgs(1, vehicle.vin);
 
       const actualVehicle = await instance.getVehicleDetailsByTokenId(1);
-      expectToMatch(actualVehicle, vehicle);
+      expectVehiclesToMatch(actualVehicle, vehicle);
       const date = new Date(actualVehicle.timestamp * 1000);
       expect(date).to.be.greaterThan(now);
 
@@ -78,6 +74,41 @@ describe("Manufacturer Capability", async () => {
         manufactureVehicle(instance, manufacturerAccount, vehicle2)
       ).to.be.revertedWith("VIN is not unique");
     });
+
+    it("Should not allow to manufacture vehicle for disabled manufacturer", async () => {
+      await instance
+        .connect(govAccount)
+        .disable(entityType.MANUFACTURER, manufacturerAccount.address);
+      //Act
+      const vehicle = createVehicle();
+      await expect(
+        manufactureVehicle(instance, manufacturerAccount, vehicle)
+      ).to.be.revertedWith(errorMessages.NOT_ALLOWED);
+    });
+
+    it("Should be allowed to manufacture vehicle for disabled and enabled again manufacturer", async () => {
+      await instance
+        .connect(govAccount)
+        .disable(entityType.MANUFACTURER, manufacturerAccount.address);
+      await instance
+        .connect(govAccount)
+        .enable(entityType.MANUFACTURER, manufacturerAccount.address);
+      //Act
+      const vehicle = createVehicle();
+      await manufactureVehicle(instance, manufacturerAccount, vehicle);
+
+      const actualVehicle = await instance.getVehicleDetailsByTokenId(1);
+      expectVehiclesToMatch(actualVehicle, vehicle);
+    });
+
+    it("Should be not allowed to manufacture vehicle without permissions", async () => {
+      // Act
+      const vehicle = createVehicle();
+      await expect(
+        // service factory is not allowed to manufacture vehicle, only to service
+        manufactureVehicle(instance, serviceFactoryAccount, vehicle)
+      ).to.be.revertedWith(errorMessages.NOT_ALLOWED);
+    });
   });
 
   describe("GetVehicleDetails", () => {
@@ -88,7 +119,7 @@ describe("Manufacturer Capability", async () => {
       // Act
       const actualVehicle = await instance.getVehicleDetailsByVin(vehicle.vin);
 
-      expectToMatch(actualVehicle, vehicle);
+      expectVehiclesToMatch(actualVehicle, vehicle);
     });
     it("Should throw on non-existing VIN", async () => {
       const vehicle = createVehicle();
@@ -96,7 +127,7 @@ describe("Manufacturer Capability", async () => {
       await manufactureVehicle(instance, manufacturerAccount, vehicle);
       await expect(
         instance.getVehicleDetailsByVin(randomVin)
-      ).to.be.revertedWith("NF");
+      ).to.be.revertedWith(errorMessages.NOT_FOUND);
     });
     it("Should return details for existing vehicle by TokenId", async () => {
       const vehicle = createVehicle();
@@ -104,7 +135,7 @@ describe("Manufacturer Capability", async () => {
 
       // Act
       const actualVehicle = await instance.getVehicleDetailsByTokenId(1);
-      expectToMatch(actualVehicle, vehicle);
+      expectVehiclesToMatch(actualVehicle, vehicle);
     });
     it("Should throw on non-existing TokenId", async () => {
       const tokenId = 0; // TokensId is starting with 1
@@ -112,12 +143,12 @@ describe("Manufacturer Capability", async () => {
       // Act
       await expect(
         instance.getVehicleDetailsByTokenId(tokenId)
-      ).to.be.revertedWith("NF");
+      ).to.be.revertedWith(errorMessages.NOT_FOUND);
     });
   });
 });
 
-const expectToMatch = (actual, expected) => {
+const expectVehiclesToMatch = (actual, expected) => {
   expect(actual.vin).to.be.equal(expected.vin);
   expect(actual.make).to.be.equal(expected.make);
   expect(actual.model).to.be.equal(expected.model);

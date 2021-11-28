@@ -19,14 +19,21 @@ describe("Service Factory Capability", () => {
   let govAccount;
   let manufacturerAccount;
   let serviceFactoryAccount;
+  let policeDepartmentAccount;
 
   beforeEach(async () => {
     VehicleLifecycleToken = await ethers.getContractFactory(
       "VehicleLifecycleToken"
     );
     let other;
-    [owner, govAccount, manufacturerAccount, serviceFactoryAccount, ...other] =
-      await ethers.getSigners();
+    [
+      owner,
+      govAccount,
+      manufacturerAccount,
+      serviceFactoryAccount,
+      policeDepartmentAccount,
+      ...other
+    ] = await ethers.getSigners();
 
     instance = await VehicleLifecycleToken.deploy();
     await instance.setAdminRole(govAccount.address);
@@ -85,7 +92,7 @@ describe("Service Factory Capability", () => {
       const recordUri = faker.internet.url();
       await instance
         .connect(govAccount)
-        .disable(2, serviceFactoryAccount.address);
+        .disable(entityType.SERVICE_FACTORY, serviceFactoryAccount.address);
       //Act
       await expect(
         instance
@@ -99,16 +106,28 @@ describe("Service Factory Capability", () => {
       const recordUri = faker.internet.url();
       await instance
         .connect(govAccount)
-        .disable(2, serviceFactoryAccount.address);
+        .disable(entityType.SERVICE_FACTORY, serviceFactoryAccount.address);
       await instance
         .connect(govAccount)
-        .enable(2, serviceFactoryAccount.address);
+        .enable(entityType.SERVICE_FACTORY, serviceFactoryAccount.address);
       //Act
       await instance
         .connect(serviceFactoryAccount)
         .addServiceLogEntry(1, mileage, recordUri);
       const logEntriesAfter = await instance.getServiceLogEntries(1);
       expect(logEntriesAfter.length).to.be.equal(1);
+    });
+
+    it("Should be not allowed to add service log entries without permissions", async () => {
+      const recordUri = faker.internet.url();
+      const mileage = faker.datatype.number();
+      // Act
+      await expect(
+        // service factory is not allowed to add police department logs, only to service logs
+        instance
+          .connect(policeDepartmentAccount)
+          .addServiceLogEntry(1, mileage, recordUri)
+      ).to.be.revertedWith(errorMessages.NOT_ALLOWED);
     });
   });
 });
