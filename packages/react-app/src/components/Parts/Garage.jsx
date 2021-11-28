@@ -17,7 +17,6 @@ export default function Garage({ address, readContracts, writeContracts, handleC
   useEffect(() => {
     async function LoadMyVehicles() {
       if (address && readContracts && readContracts.VehicleLifecycleToken) {
-        console.log("Loading myVehicles");
         setLoading(true);
         const count = await readContracts.VehicleLifecycleToken.balanceOf(address);
         const localVehicles = [];

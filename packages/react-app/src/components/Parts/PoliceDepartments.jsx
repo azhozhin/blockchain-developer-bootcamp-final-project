@@ -10,6 +10,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
   const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingArray, setLoadingArray] = useState({});
 
   useEffect(() => {
     setLoading(true);
@@ -30,6 +31,10 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
               results[i] = res.data;
             }),
           );
+          setLoadingArray(prevState => ({
+            ...prevState,
+            [obj.addr]: false,
+          }));
         });
 
         await Promise.all(list);
@@ -58,7 +63,7 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
       }
     }
     getPoliceDepartments();
-  }, [readContracts]);
+  }, [readContracts, tx]);
 
   const columns = [
     {
@@ -101,17 +106,26 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
       dataIndex: "state",
       key: "state",
       width: "100px",
-      render: state => (
+      render: (state, record) => (
         <EntityState
           state={state}
           allowed={roles && roles.isGovernment}
+          loading={loadingArray[record.addr]}
           onChange={async () => {
+            setLoadingArray(prevState => ({
+              ...prevState,
+              [record.addr]: true,
+            }));
             const result = await executeMethod(
               tx,
               state == 1
-                ? writeContracts.VehicleLifecycleToken.disable(entityType.POLICE, targetAddr)
-                : writeContracts.VehicleLifecycleToken.enable(entityType.POLICE, targetAddr),
+                ? writeContracts.VehicleLifecycleToken.disable(entityType.POLICE, record.addr)
+                : writeContracts.VehicleLifecycleToken.enable(entityType.POLICE, record.addr),
             );
+            setLoadingArray(prevState => ({
+              ...prevState,
+              [record.addr]: false,
+            }));
           }}
         />
       ),

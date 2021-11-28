@@ -8,6 +8,7 @@ import { entityType, executeMethod } from "../../helpers/entityHelper";
 export default function PoliceDepartments({ readContracts, writeContracts, tx, roles }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
+  const [loadingArray, setLoadingArray] = useState({});
 
   useEffect(() => {
     setLoading(true);
@@ -104,13 +105,22 @@ export default function PoliceDepartments({ readContracts, writeContracts, tx, r
         <EntityState
           state={state}
           allowed={roles.isGovernment}
+          loading={loadingArray[record.addr]}
           onChange={async () => {
+            setLoadingArray(prevState => ({
+              ...prevState,
+              [record.addr]: true,
+            }));
             const result = await executeMethod(
               tx,
               state == 1
-                ? writeContracts.VehicleLifecycleToken.disable(entityType.SERVICE_FACTORY, targetAddr)
-                : writeContracts.VehicleLifecycleToken.enable(entityType.SERVICE_FACTORY, targetAddr),
+                ? writeContracts.VehicleLifecycleToken.disable(entityType.SERVICE_FACTORY, record.addr)
+                : writeContracts.VehicleLifecycleToken.enable(entityType.SERVICE_FACTORY, record.addr),
             );
+            setLoadingArray(prevState => ({
+              ...prevState,
+              [record.addr]: false,
+            }));
           }}
         />
       ),

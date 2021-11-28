@@ -104,8 +104,8 @@ export default function Manufacturers({ readContracts, writeContracts, roles, tx
             const result = await executeMethod(
               tx,
               state == 1
-                ? writeContracts.VehicleLifecycleToken.disable(entityType.MANUFACTURER, targetAddr)
-                : writeContracts.VehicleLifecycleToken.enable(entityType.MANUFACTURER, targetAddr),
+                ? writeContracts.VehicleLifecycleToken.disable(entityType.MANUFACTURER, record.addr)
+                : writeContracts.VehicleLifecycleToken.enable(entityType.MANUFACTURER, record.addr),
             );
             setLoadingArray(prevState => ({
               ...prevState,

@@ -15,7 +15,7 @@ const services = [
   },
 ];
 
-export default function AddServiceRecordForm({ visible, setVisible, vehicleDetails, writeContracts }) {
+export default function AddServiceRecordForm({ visible, setVisible, vehicleDetails, writeContracts, tx }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
 

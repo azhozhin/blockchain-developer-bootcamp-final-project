@@ -7,7 +7,6 @@ import AddPoliceRecordForm from "./AddPoliceRecordForm";
 import AddServiceRecordForm from "./AddServiceRecordForm";
 import TokenEvents from "../TokenEvents";
 
-
 export default function Vehicle({ readContracts, writeContracts, tokenId, roles, tx, localProvider, mainnetProvider }) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
@@ -120,6 +119,7 @@ export default function Vehicle({ readContracts, writeContracts, tokenId, roles,
                 Add Service Record
               </Button>
               <AddServiceRecordForm
+                tx={tx}
                 visible={addServiceRecordVisible}
                 setVisible={setAddServiceRecordVisible}
                 vehicleDetails={data}

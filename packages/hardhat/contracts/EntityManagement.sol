@@ -21,6 +21,7 @@ abstract contract EntityManagement {
     event EntitySuspended(EntityType indexed entityType, address indexed addr, string name);
     event EntityResumed(EntityType indexed entityType, address indexed addr, string name);
 
+    /// @notice Checks if particular address is registered in entityMap
     modifier exists(mapping(address => Entity) storage entityMap, address addr) {
         Entity memory entity = entityMap[addr];
         require(entity.addr != address(0), "Entity does not exist");
@@ -103,4 +104,3 @@ abstract contract EntityManagement {
         emit EntityResumed(type_, addr, entity.name);
     }
 }
-

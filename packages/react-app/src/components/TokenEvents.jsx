@@ -35,7 +35,7 @@ export default function TokenEvents({ contracts, contractName, eventName, localP
 
   return (
     <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-      <Table
+      {/* <Table
         dataSource={events}
         columns={columns}
         renderItem={item => {
@@ -48,7 +48,7 @@ export default function TokenEvents({ contracts, contractName, eventName, localP
                   );
             }
         }}
-      />
+      /> */}
     </div>
   );
 }
