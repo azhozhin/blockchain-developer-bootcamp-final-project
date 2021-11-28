@@ -70,13 +70,13 @@ contract VehicleLifecycleToken is
         uint32 maxMileage,
         uint32 engineSize,
         string memory tokenUri
-    ) public only(MANUFACTURER) returns (uint256 tokenId) {
+    ) public only(MANUFACTURER) returns (uint256) {
         
         // TODO: check that tokenUri starts with https://ipfs.io/ipfs/ to enforce metadata location
 
         _tokenIds.increment();
 
-        tokenId = _tokenIds.current();
+        uint256 tokenId = _tokenIds.current();
         _safeMint(msg.sender, tokenId);
         _manufactureVehicle(
             tokenId,
@@ -89,6 +89,7 @@ contract VehicleLifecycleToken is
             engineSize
         );
         _setTokenURI(tokenId, tokenUri);
+        return tokenId;
     }
 
     /// @notice Returns tokenURI with metadata according to ERC721 Metadata standard

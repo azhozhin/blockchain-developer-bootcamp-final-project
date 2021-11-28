@@ -40,112 +40,120 @@ describe("Manufacturer Capability", async () => {
 
   describe("ManufactureVehicle", () => {
     it("Should add new vehicle owned by manufacturer and emit event", async () => {
-      const vin = faker.vehicle.vin();
-      const make = faker.vehicle.manufacturer();
-      const model = faker.vehicle.model();
-      const color = faker.vehicle.color();
-      const year = faker.datatype.number({
-        min: 2000,
-        max: 2021,
-        precision: 1,
-      });
-      const maxMileage = faker.datatype.number({
-        min: 50000,
-        max: 300000,
-        precision: 1000,
-      });
-      const engineSize = faker.datatype.number({
-        min: 1500,
-        max: 4000,
-        precision: 100,
-      });
-      const tokenUri = faker.internet.url();
+      const vehicle = createVehicle();
       const now = new Date();
 
       // Act
-      await expect(
-        instance
-          .connect(manufacturerAccount)
-          .manufactureVehicle(
-            vin,
-            make,
-            model,
-            color,
-            year,
-            maxMileage,
-            engineSize,
-            tokenUri
-          )
-      )
+      await expect(manufactureVehicle(instance, manufacturerAccount, vehicle))
         .to.emit(instance, "VehicleManufactured")
-        .withArgs(1, vin);
+        .withArgs(1, vehicle.vin);
 
-      const vehicle = await instance.getVehicleDetailsByTokenId(1);
-      expect(vehicle.vin).to.be.equal(vin);
-      expect(vehicle.make).to.be.equal(make);
-      expect(vehicle.model).to.be.equal(model);
-      expect(vehicle.color).to.be.equal(color);
-      expect(vehicle.year).to.be.equal(year);
-      expect(vehicle.maxMileage).to.be.equal(maxMileage);
-      expect(vehicle.engineSize).to.be.equal(engineSize);
-      const date = new Date(vehicle.timestamp * 1000);
+      const actualVehicle = await instance.getVehicleDetailsByTokenId(1);
+      expectToMatch(actualVehicle, vehicle);
+      const date = new Date(actualVehicle.timestamp * 1000);
       expect(date).to.be.greaterThan(now);
 
       const actualTokenUri = await instance.tokenURI(1);
-      expect(actualTokenUri).to.be.equal(tokenUri);
+      expect(actualTokenUri).to.be.equal(vehicle.tokenUri);
     });
 
     it("Should not allow new vehicle with same vin", async () => {
       const vin = faker.vehicle.vin();
+      const vehicle1 = createVehicle(vin);
+      const vehicle2 = createVehicle(vin);
       // Act
       // first vehicle
-      await instance.connect(manufacturerAccount).manufactureVehicle(
-        vin,
-        faker.vehicle.manufacturer(),
-        faker.vehicle.model(),
-        faker.vehicle.color(),
-        faker.datatype.number({
-          min: 2000,
-          max: 2021,
-          precision: 1,
-        }),
-        faker.datatype.number({
-          min: 50000,
-          max: 300000,
-          precision: 1000,
-        }),
-        faker.datatype.number({
-          min: 1500,
-          max: 4000,
-          precision: 100,
-        }),
-        faker.internet.url()
-      );
+      await manufactureVehicle(instance, manufacturerAccount, vehicle1);
       // second vehicle with same vin should throw
       await expect(
-        instance.connect(manufacturerAccount).manufactureVehicle(
-          vin,
-          faker.vehicle.manufacturer(),
-          faker.vehicle.model(),
-          faker.vehicle.color(),
-          faker.datatype.number({
-            min: 2000,
-            max: 2021,
-            precision: 1,
-          }),
-          faker.datatype.number({
-            min: 50000,
-            max: 300000,
-            precision: 1000,
-          }),
-          faker.datatype.number({
-            min: 1500,
-            max: 4000,
-            precision: 100,
-          }),
-          faker.internet.url()
-        )
+        manufactureVehicle(instance, manufacturerAccount, vehicle2)
       ).to.be.revertedWith("VIN is not unique");
     });
   });
+
+  describe("GetVehicleDetails", () => {
+    it("Should return details for existing vehicle by VIN", async () => {
+      const vehicle = createVehicle();
+      await manufactureVehicle(instance, manufacturerAccount, vehicle);
+
+      // Act
+      const actualVehicle = await instance.getVehicleDetailsByVin(vehicle.vin);
+
+      expectToMatch(actualVehicle, vehicle);
+    });
+    it("Should throw on non-existing VIN", async () => {
+      const vehicle = createVehicle();
+      const randomVin = faker.vehicle.vin();
+      await manufactureVehicle(instance, manufacturerAccount, vehicle);
+      await expect(
+        instance.getVehicleDetailsByVin(randomVin)
+      ).to.be.revertedWith("NF");
+    });
+    it("Should return details for existing vehicle by TokenId", async () => {
+      const vehicle = createVehicle();
+      await manufactureVehicle(instance, manufacturerAccount, vehicle);
+
+      // Act
+      const actualVehicle = await instance.getVehicleDetailsByTokenId(1);
+      expectToMatch(actualVehicle, vehicle);
+    });
+    it("Should throw on non-existing TokenId", async () => {
+      const tokenId = 0; // TokensId is starting with 1
+
+      // Act
+      await expect(
+        instance.getVehicleDetailsByTokenId(tokenId)
+      ).to.be.revertedWith("NF");
+    });
+  });
 });
+
+const expectToMatch = (actual, expected) => {
+  expect(actual.vin).to.be.equal(expected.vin);
+  expect(actual.make).to.be.equal(expected.make);
+  expect(actual.model).to.be.equal(expected.model);
+  expect(actual.color).to.be.equal(expected.color);
+  expect(actual.year).to.be.equal(expected.year);
+  expect(actual.maxMileage).to.be.equal(expected.maxMileage);
+  expect(actual.engineSize).to.be.equal(expected.engineSize);
+};
+
+const manufactureVehicle = async (instance, account, vehicle) => {
+  return instance
+    .connect(account)
+    .manufactureVehicle(
+      vehicle.vin,
+      vehicle.make,
+      vehicle.model,
+      vehicle.color,
+      vehicle.year,
+      vehicle.maxMileage,
+      vehicle.engineSize,
+      vehicle.tokenUri
+    );
+};
+
+const createVehicle = (vin = undefined) => {
+  return {
+    vin: vin ? vin : faker.vehicle.vin(),
+    make: faker.vehicle.manufacturer(),
+    model: faker.vehicle.model(),
+    color: faker.vehicle.color(),
+    year: faker.datatype.number({
+      min: 2000,
+      max: 2021,
+      precision: 1,
+    }),
+    maxMileage: faker.datatype.number({
+      min: 50000,
+      max: 300000,
+      precision: 1000,
+    }),
+    engineSize: faker.datatype.number({
+      min: 1500,
+      max: 4000,
+      precision: 100,
+    }),
+    tokenUri: faker.internet.url(),
+  };
+};

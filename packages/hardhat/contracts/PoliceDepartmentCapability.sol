@@ -24,6 +24,7 @@ abstract contract PoliceDepartmentCapability is LifecycleAccessControl {
         PoliceDepartmentLogEntry memory logEntry = PoliceDepartmentLogEntry(block.timestamp, msg.sender, recordUri);
         _tokenId2PoliceLogs[tokenId].push(logEntry);
         _tokenId2PoliceCount[tokenId]++;
+        // TODO: Should we emit event here?
     }
 
     function getPoliceLogEntries(uint256 tokenId) public view returns(PoliceDepartmentLogEntry[] memory){

@@ -29,15 +29,10 @@ describe("Service Factory Capability", () => {
     instance = await VehicleLifecycleToken.deploy();
     await instance.setAdminRole(govAccount.address);
 
-    const serviceFactoryName = faker.lorem.word();
-    const serviceFactoryUri = faker.internet.url();
-    
-    const manufacturerName = faker.lorem.word();
-    const manufacturerUri = faker.internet.url();
     // TODO: magic constant!
     await instance
       .connect(govAccount)
-      .add(1, manufacturerAccount.address, manufacturerName, manufacturerUri);
+      .add(1, manufacturerAccount.address, faker.lorem.word(), faker.internet.url());
 
     // TODO: magic constant!
     await instance
@@ -45,22 +40,11 @@ describe("Service Factory Capability", () => {
       .add(
         2,
         serviceFactoryAccount.address,
-        serviceFactoryName,
-        serviceFactoryUri
-      );
-
-    await instance
-      .connect(manufacturerAccount)
-      .manufactureVehicle(
-        faker.vehicle.vin(),
-        faker.vehicle.manufacturer(),
-        faker.vehicle.model(),
-        faker.vehicle.color(),
-        faker.datatype.number({ min: 2000, max: 2021, precision: 1 }),
-        faker.datatype.number({ min: 50000, max: 300000, precision: 1000 }),
-        faker.datatype.number({ min: 1500, max: 4000, precision: 100 }),
+        faker.lorem.word(),
         faker.internet.url()
       );
+
+    await manufactureVehicle(instance, manufacturerAccount, createVehicle());
   });
 
   describe("Add ServiceLogEntry", () => {
@@ -86,5 +70,55 @@ describe("Service Factory Capability", () => {
       expect(logEntry.mileage).to.be.equal(mileage);
       expect(logEntry.recordUri).to.be.equal(recordUri);
     });
+
+    it("Should not allow to add new entry for disabled service factory",async ()=>{
+
+    });
+
+    it("Should be allowed to add new entry for disabled and enabled service factory",async ()=>{
+
+    })
   });
 });
+
+// TODO: duplicate
+const manufactureVehicle = async (instance, account, vehicle) => {
+    return instance
+      .connect(account)
+      .manufactureVehicle(
+        vehicle.vin,
+        vehicle.make,
+        vehicle.model,
+        vehicle.color,
+        vehicle.year,
+        vehicle.maxMileage,
+        vehicle.engineSize,
+        vehicle.tokenUri
+      );
+  };
+  
+  const createVehicle = (vin = undefined) => {
+    return {
+      vin: vin ? vin : faker.vehicle.vin(),
+      make: faker.vehicle.manufacturer(),
+      model: faker.vehicle.model(),
+      color: faker.vehicle.color(),
+      year: faker.datatype.number({
+        min: 2000,
+        max: 2021,
+        precision: 1,
+      }),
+      maxMileage: faker.datatype.number({
+        min: 50000,
+        max: 300000,
+        precision: 1000,
+      }),
+      engineSize: faker.datatype.number({
+        min: 1500,
+        max: 4000,
+        precision: 100,
+      }),
+      tokenUri: faker.internet.url(),
+    };
+  };
+  

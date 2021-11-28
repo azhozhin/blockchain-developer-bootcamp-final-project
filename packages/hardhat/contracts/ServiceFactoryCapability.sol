@@ -30,6 +30,7 @@ abstract contract ServiceFactoryCapability is LifecycleAccessControl {
         );
         _tokenId2Logs[tokenId].push(logEntry);
         _tokenId2Count[tokenId]++;
+        // TODO: should we emit event here?
     }
 
     function getServiceLogEntries(uint256 tokenId)

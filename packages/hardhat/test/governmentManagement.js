@@ -13,7 +13,6 @@ describe("Government management", async () => {
   let manufacturerAccount;
   let serviceFactoryAccount;
   let policeDepartmentAccount;
-  
 
   var testCases = [
     {
@@ -130,7 +129,7 @@ describe("Government management", async () => {
 
         // Act
         await expect(
-          await instance
+          instance
             .connect(govAccount)
             .disable(entityTypeId, targetAccount.address)
         )
@@ -159,7 +158,7 @@ describe("Government management", async () => {
 
         // Act
         await expect(
-          await instance
+          instance
             .connect(govAccount)
             .enable(entityTypeId, targetAccount.address)
         )
