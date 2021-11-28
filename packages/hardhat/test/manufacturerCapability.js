@@ -2,6 +2,11 @@ const { ethers, artifacts } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const faker = require("faker");
+const {
+  createVehicle,
+  manufactureVehicle,
+  entityType,
+} = require("./testHelpers");
 
 use(solidity);
 
@@ -32,10 +37,14 @@ describe("Manufacturer Capability", async () => {
     const manufacturerName = faker.lorem.word();
     const manufacturerUri = faker.internet.url();
 
-    // TODO: magic constant!
     await instance
       .connect(govAccount)
-      .add(1, manufacturerAccount.address, manufacturerName, manufacturerUri);
+      .add(
+        entityType.MANUFACTURER,
+        manufacturerAccount.address,
+        manufacturerName,
+        manufacturerUri
+      );
   });
 
   describe("ManufactureVehicle", () => {
@@ -116,44 +125,4 @@ const expectToMatch = (actual, expected) => {
   expect(actual.year).to.be.equal(expected.year);
   expect(actual.maxMileage).to.be.equal(expected.maxMileage);
   expect(actual.engineSize).to.be.equal(expected.engineSize);
-};
-
-const manufactureVehicle = async (instance, account, vehicle) => {
-  return instance
-    .connect(account)
-    .manufactureVehicle(
-      vehicle.vin,
-      vehicle.make,
-      vehicle.model,
-      vehicle.color,
-      vehicle.year,
-      vehicle.maxMileage,
-      vehicle.engineSize,
-      vehicle.tokenUri
-    );
-};
-
-const createVehicle = (vin = undefined) => {
-  return {
-    vin: vin ? vin : faker.vehicle.vin(),
-    make: faker.vehicle.manufacturer(),
-    model: faker.vehicle.model(),
-    color: faker.vehicle.color(),
-    year: faker.datatype.number({
-      min: 2000,
-      max: 2021,
-      precision: 1,
-    }),
-    maxMileage: faker.datatype.number({
-      min: 50000,
-      max: 300000,
-      precision: 1000,
-    }),
-    engineSize: faker.datatype.number({
-      min: 1500,
-      max: 4000,
-      precision: 100,
-    }),
-    tokenUri: faker.internet.url(),
-  };
 };

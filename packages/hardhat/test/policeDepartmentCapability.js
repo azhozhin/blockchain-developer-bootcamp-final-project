@@ -2,6 +2,7 @@ const { ethers, artifacts } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const faker = require("faker");
+const { entityType } = require("./testHelpers");
 
 use(solidity);
 
@@ -13,7 +14,7 @@ describe("Police Department Capability", () => {
   let manufacturerAccount;
   let serviceFactoryAccount;
   let policeDepartmentAccount;
-  
+
   beforeEach(async () => {
     VehicleLifecycleToken = await ethers.getContractFactory(
       "VehicleLifecycleToken"
@@ -33,19 +34,23 @@ describe("Police Department Capability", () => {
 
     const policeDepartmentName = faker.lorem.word();
     const policeDepartmentUri = faker.internet.url();
-    
+
     const manufacturerName = faker.lorem.word();
     const manufacturerUri = faker.internet.url();
-    // TODO: magic constant!
-    await instance
-      .connect(govAccount)
-      .add(1, manufacturerAccount.address, manufacturerName, manufacturerUri);
 
-    // TODO: magic constant!
     await instance
       .connect(govAccount)
       .add(
-        3,
+        entityType.MANUFACTURER,
+        manufacturerAccount.address,
+        manufacturerName,
+        manufacturerUri
+      );
+
+    await instance
+      .connect(govAccount)
+      .add(
+        entityType.POLICE,
         policeDepartmentAccount.address,
         policeDepartmentName,
         policeDepartmentUri
