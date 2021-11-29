@@ -75,7 +75,8 @@ export default function AddVehicleForm({
     fields.imageUri = fileList[0].originFileObj ? fileList[0].originFileObj.url : fileList[0].url;
     let [obj, jsonName] = serializeVehicleMetadata(fields);
     const data = await pinataApi.pinJsonToIpfs(obj, jsonName);
-    const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
+    // we need to use proper IPFS link as it is enforced by smart contract
+    const metadataUri = "ipfs://" + data.IpfsHash;
     try {
       const result = await executeMethod(
         tx,

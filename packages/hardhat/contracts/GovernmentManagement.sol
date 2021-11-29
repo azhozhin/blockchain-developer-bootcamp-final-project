@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity =0.8.10;
 
 import "./LifecycleAccessControl.sol";
 import "./ManufacturerManagement.sol";
@@ -25,8 +25,6 @@ abstract contract GovernmentManagement is
         public
         only(GOVERNMENT)
     {
-        // TODO: check that metadataUri starts with ipfs:// to enforce metadata location
-
         if (type_==EntityType.MANUFACTURER){
             _addManufacturer(addr, name, metadataUri);
             grantRole(MANUFACTURER, addr);    

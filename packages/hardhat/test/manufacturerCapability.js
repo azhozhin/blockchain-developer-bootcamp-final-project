@@ -7,6 +7,7 @@ const {
   manufactureVehicle,
   entityType,
   errorMessages,
+  fakeIpfsUri,
 } = require("./testHelpers");
 
 use(solidity);
@@ -31,7 +32,7 @@ describe("Manufacturer Capability", async () => {
     await instance.setAdminRole(govAccount.address);
 
     const manufacturerName = faker.lorem.word();
-    const manufacturerUri = faker.internet.url();
+    const manufacturerUri = fakeIpfsUri();
 
     await instance
       .connect(govAccount)
@@ -72,7 +73,19 @@ describe("Manufacturer Capability", async () => {
       // second vehicle with same vin should throw
       await expect(
         manufactureVehicle(instance, manufacturerAccount, vehicle2)
-      ).to.be.revertedWith("VIN is not unique");
+      ).to.be.revertedWith(errorMessages.NOT_UNIQUE_VIN);
+    });
+
+    it("Should not allow to manufacture vehicle with non-ipfs uri", async () => {
+      const vin = faker.vehicle.vin();
+      const tokenUri = faker.internet.url(); // this is not ipfs:// uri
+      const vehicle = createVehicle(vin, tokenUri);
+      const now = new Date();
+
+      // Act
+      await expect(
+        manufactureVehicle(instance, manufacturerAccount, vehicle)
+      ).to.be.revertedWith(errorMessages.NON_IPFS_TOKEN_URI);
     });
 
     it("Should not allow to manufacture vehicle for disabled manufacturer", async () => {

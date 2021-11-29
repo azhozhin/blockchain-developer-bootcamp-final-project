@@ -86,7 +86,7 @@ export const serializeVehicleMetadata = fields => {
   return [obj, name];
 };
 
-export const deserializePoliceDepartmentMetadata = (el, metadata) => {
+export const deserializePoliceDepartmentMetadata = (el, metadata, pinataApi) => {
   const attrs = metadata.attributes
     ? Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })))
     : {};
@@ -95,7 +95,7 @@ export const deserializePoliceDepartmentMetadata = (el, metadata) => {
     name: el.name,
     state: el.state,
     metadataUri: el.metadataUri,
-    imageUri: metadata.image,
+    imageUri: pinataApi.convertToUrl(metadata.image),
     description: metadata.description,
     externalUri: metadata.external_uri,
     address: {
@@ -107,28 +107,28 @@ export const deserializePoliceDepartmentMetadata = (el, metadata) => {
   return obj;
 };
 
-export const deserializeManufacturerMetadata = (el, metadata) => {
+export const deserializeManufacturerMetadata = (el, metadata, pinataApi) => {
   const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
   const obj = {
     addr: el.addr,
     name: el.name,
     state: el.state,
-    metadataUri: el.metadataUri,
-    imageUri: metadata.image,
+    metadataUri: pinataApi.convertToUrl(el.metadataUri),
+    imageUri: pinataApi.convertToUrl(metadata.image),
     description: metadata.description,
     externalUri: metadata.external_uri,
   };
   return obj;
 };
 
-export const deserializeServiceFactoryMetadata = (data, metadata) => {
+export const deserializeServiceFactoryMetadata = (data, metadata, pinataApi) => {
   const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
   const obj = {
     addr: data.addr,
     name: data.name,
     state: data.state,
-    metadataUri: data.metadataUri,
-    imageUri: metadata.image,
+    metadataUri: pinataApi.convertToUrl(data.metadataUri),
+    imageUri: pinataApi.convertToUrl(metadata.image),
     description: metadata.description,
     externalUri: metadata.external_uri,
     address: {
@@ -140,7 +140,7 @@ export const deserializeServiceFactoryMetadata = (data, metadata) => {
   return obj;
 };
 
-export const deserializeVehicleMetadata = (data, metadata) => {
+export const deserializeVehicleMetadata = (data, metadata, pinataApi) => {
   const attrs = Object.assign({}, ...metadata.attributes.map(x => ({ [x.attr_type]: x.value })));
   const obj = {
     tokenId: data.tokenId.toString(),
@@ -151,20 +151,21 @@ export const deserializeVehicleMetadata = (data, metadata) => {
     year: data.year,
     maxMileage: data.maxMileage,
     engineSize: data.engineSize,
-    imageUri: metadata.image,
+    imageUri: pinataApi.convertToUrl(metadata.image),
     description: metadata.description,
     externalUri: metadata.externalUri,
   };
   return obj;
 };
 
-export const loadEntities = async (entityList, deserialize) => {
+export const loadEntities = async (entityList, deserialize, pinataApi) => {
   const metadataRequests = [];
   const metadataContents = [];
 
   entityList.forEach((el, i) => {
+    let url = pinataApi.convertToUrl(el.metadataUri);
     metadataRequests.push(
-      axios.get(el.metadataUri).then(function (res) {
+      axios.get(url).then(function (res) {
         metadataContents[i] = res.data;
       }),
     );
@@ -175,7 +176,7 @@ export const loadEntities = async (entityList, deserialize) => {
   const entities = [];
   const addr2index = {};
   entityList.forEach((entity, i) => {
-    const deserializedEntity = deserialize(entity, metadataContents[i]);
+    const deserializedEntity = deserialize(entity, metadataContents[i], pinataApi);
     entities.push(deserializedEntity);
     addr2index[deserializedEntity.addr] = i;
   });

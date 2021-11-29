@@ -6,7 +6,7 @@ const { Search } = Input;
 const { Option } = Select;
 
 export default function VehicleSearch({ readContracts, handleChange }) {
-  const [searchMode, setSearchMode] = useState("vin");
+  const [searchMode, setSearchMode] = useState("tokenId");
   const [search, setSearch] = useState("");
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);

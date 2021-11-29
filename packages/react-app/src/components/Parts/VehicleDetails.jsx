@@ -8,7 +8,17 @@ import AddServiceRecordForm from "./AddServiceRecordForm";
 import TokenEvents from "../TokenEvents";
 import { deserializeVehicleMetadata } from "../../helpers/entityHelper";
 
-export default function Vehicle({ address, readContracts, writeContracts, tokenId, roles, tx, localProvider, mainnetProvider }) {
+export default function Vehicle({
+  address,
+  readContracts,
+  writeContracts,
+  tokenId,
+  roles,
+  tx,
+  localProvider,
+  mainnetProvider,
+  pinataApi,
+}) {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [addPoliceRecordVisible, setAddPoliceRecordVisible] = useState(false);
@@ -23,9 +33,9 @@ export default function Vehicle({ address, readContracts, writeContracts, tokenI
         const newData = await readContracts.VehicleLifecycleToken.getVehicleDetailsByTokenId(tokenId);
         const metadataUri = await readContracts.VehicleLifecycleToken.tokenURI(tokenId);
 
-        const res = await axios.get(metadataUri);
+        const res = await axios.get(pinataApi.convertToUrl(metadataUri));
         const metadata = res.data;
-        const vehicle = deserializeVehicleMetadata(newData, metadata);
+        const vehicle = deserializeVehicleMetadata(newData, metadata, pinataApi);
 
         const properties = [
           { name: "tokenId", value: newData.tokenId.toString() },
@@ -42,6 +52,7 @@ export default function Vehicle({ address, readContracts, writeContracts, tokenI
 
         setData(vehicle);
         setLoading(false);
+        console.log(vehicle);
       }
     }
     getVehicle();
@@ -102,6 +113,7 @@ export default function Vehicle({ address, readContracts, writeContracts, tokenI
                 readContracts={readContracts}
                 tokenId={tokenId}
                 refreshTrigger={addServiceRecordVisible}
+                pinataApi={pinataApi}
               />
               <Button disabled={!roles.isServiceFactory} onClick={showAddServiceRecord}>
                 Add Service Record
@@ -116,7 +128,12 @@ export default function Vehicle({ address, readContracts, writeContracts, tokenI
             </Col>
             <Col span={12}>
               <h3>Police Records</h3>
-              <PoliceRecords readContracts={readContracts} tokenId={tokenId} refreshTrigger={addPoliceRecordVisible} />
+              <PoliceRecords
+                readContracts={readContracts}
+                tokenId={tokenId}
+                refreshTrigger={addPoliceRecordVisible}
+                pinataApi={pinataApi}
+              />
               <Button disabled={!roles.isPolice} onClick={showAddPoliceRecord}>
                 Add Police Record
               </Button>

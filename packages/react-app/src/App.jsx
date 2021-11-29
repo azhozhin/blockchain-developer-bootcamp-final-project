@@ -100,6 +100,14 @@ function App(props) {
       const pinataSecretApiKey = process.env.REACT_APP_PINATA_API_SECRET;
       return pinJsonToIpfs(jsonBody, name, pinataApiKey, pinataSecretApiKey);
     },
+    convertToUrl: ipfsLink => {
+      var url = new URL(ipfsLink);
+      if (url.protocol.toLowerCase() == "ipfs:") {
+        return "https://ipfs.io/ipfs/" + (url.pathname).replace(/^\/\//, '');
+      } else {
+        return ipfsLink;
+      }
+    },
   };
   // load all your providers
   const localProvider = useStaticJsonRPC([

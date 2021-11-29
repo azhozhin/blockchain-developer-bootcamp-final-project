@@ -2,7 +2,7 @@ const { ethers, artifacts } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const faker = require("faker");
-const { entityType, errorMessages } = require("./testHelpers");
+const { entityType, errorMessages, fakeIpfsUri } = require("./testHelpers");
 
 use(solidity);
 
@@ -33,10 +33,10 @@ describe("Police Department Capability", () => {
     await instance.setAdminRole(govAccount.address);
 
     const policeDepartmentName = faker.lorem.word();
-    const policeDepartmentUri = faker.internet.url();
+    const policeDepartmentUri = fakeIpfsUri();
 
     const manufacturerName = faker.lorem.word();
-    const manufacturerUri = faker.internet.url();
+    const manufacturerUri = fakeIpfsUri();
 
     await instance
       .connect(govAccount)
@@ -66,7 +66,7 @@ describe("Police Department Capability", () => {
         faker.datatype.number({ min: 2000, max: 2021, precision: 1 }),
         faker.datatype.number({ min: 50000, max: 300000, precision: 1000 }),
         faker.datatype.number({ min: 1500, max: 4000, precision: 100 }),
-        faker.internet.url()
+        fakeIpfsUri()
       );
   });
 
@@ -74,7 +74,7 @@ describe("Police Department Capability", () => {
     it("Should add new entry with all parameters to storage", async () => {
       const logEntriesBefore = await instance.getPoliceLogEntries(1);
       expect(logEntriesBefore.length).to.be.equal(0);
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       var now = new Date();
 
       //Act
@@ -93,7 +93,7 @@ describe("Police Department Capability", () => {
     });
 
     it("Should not allow to add new entry for disabled police department", async () => {
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       await instance
         .connect(govAccount)
         .disable(entityType.POLICE, policeDepartmentAccount.address);
@@ -105,7 +105,7 @@ describe("Police Department Capability", () => {
     });
 
     it("Should be allowed to add new entry for disabled and enabled again police department", async () => {
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       await instance
         .connect(govAccount)
         .disable(entityType.POLICE, policeDepartmentAccount.address);
@@ -123,7 +123,7 @@ describe("Police Department Capability", () => {
     });
 
     it("Should be not allowed to add police log entries without permissions", async () => {
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       // Act
       await expect(
         // service factory is not allowed to add police department logs, only to service logs

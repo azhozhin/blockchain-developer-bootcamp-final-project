@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity =0.8.10;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -30,8 +30,6 @@ contract VehicleLifecycleToken is
 
     /// @notice Creates new instance of the contract
     constructor() ERC721("Vehicle Lifecycle Token", "VLT") Ownable() {
-        //_setupRole(GOVERNMENT, msg.sender);
-        //_setRoleAdmin();
     }
 
     /// @notice Setup main admin role (GOVERNMENT) for participant
@@ -42,8 +40,9 @@ contract VehicleLifecycleToken is
     }
 
     /// @notice Self-destroy function to get rid contract from public network (testnet)
-    /// @notice It should be removed from final version of contract
+    /// @notice It MUST BE REMOVED from final version of contract
     /// @dev Used to quickly get rid of deployed contract instance to allow testing on testnets
+    // TODO: remove from final version of contract
     function destroy() public payable onlyOwner {
         address payable _owner = payable(owner());
         selfdestruct(_owner);
@@ -72,8 +71,7 @@ contract VehicleLifecycleToken is
         string memory tokenUri
     ) public only(MANUFACTURER) returns (uint256) {
         
-        // TODO: check that tokenUri starts with ipfs:// to enforce metadata location
-
+        require(startsWith(toSlice(tokenUri), toSlice("ipfs://")), "TokenUri should start with ipfs://");
         _tokenIds.increment();
 
         uint256 tokenId = _tokenIds.current();

@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity =0.8.10;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -24,7 +24,7 @@ abstract contract LifecycleAccessControl is AccessControl {
     bytes32 public constant POLICE = keccak256("POLICE");
 
     modifier only(bytes32 role) {
-        require(hasRole(role, msg.sender), "NA"); // NA = Caller is not authorized for this operation
+        require(hasRole(role, msg.sender), "Not Allowed"); //  Caller is not authorized for this operation
         _;
     }
 

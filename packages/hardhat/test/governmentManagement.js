@@ -2,7 +2,12 @@ const { ethers, artifacts } = require("hardhat");
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const faker = require("faker");
-const { entityType, entityState } = require("./testHelpers");
+const {
+  entityType,
+  entityState,
+  errorMessages,
+  fakeIpfsUri,
+} = require("./testHelpers");
 
 use(solidity);
 
@@ -81,7 +86,7 @@ describe("Government management", async () => {
         expect(entities.length).to.be.equal(0);
 
         const name = faker.lorem.word();
-        const url = faker.internet.url();
+        const url = fakeIpfsUri();
 
         // Act
         await instance
@@ -99,7 +104,7 @@ describe("Government management", async () => {
 
       it(`Should set correct permissions and emit event`, async () => {
         const name = faker.lorem.word();
-        const url = faker.internet.url();
+        const url = fakeIpfsUri();
         const targetAccount = getTargetAccount(entityTypeId);
 
         // Act
@@ -114,13 +119,43 @@ describe("Government management", async () => {
         const result = await instance.getRoles(targetAccount.address);
         expect(testCase.hasRole(result)).to.be.true;
       });
+
+      it(`Should not allow to add same entity again`, async () => {
+        const name = faker.lorem.word();
+        const url = fakeIpfsUri();
+        const targetAccount = getTargetAccount(entityTypeId);
+
+        // Add first entity
+        await instance
+          .connect(govAccount)
+          .add(entityTypeId, targetAccount.address, name, url);
+        // Act - add the same entity again
+        await expect(
+          instance
+            .connect(govAccount)
+            .add(entityTypeId, targetAccount.address, name, url)
+        ).to.be.revertedWith(errorMessages.ALREADY_EXISTS);
+      });
+
+      it("Should not allow to add entity with non-ipfs uri", async () => {
+        const name = faker.lorem.word();
+        const url = faker.internet.url(); // this is not ipfs:// uri
+        const targetAccount = getTargetAccount(entityTypeId);
+
+        // Act
+        await expect(
+          instance
+            .connect(govAccount)
+            .add(entityTypeId, targetAccount.address, name, url)
+        ).to.be.revertedWith(errorMessages.NON_IPFS_METADATA_URI);
+      });
     });
 
     describe(`Disable Entity '${testCase.entityType}'`, () => {
       it(`Should revoke role, change state, and emit event`, async () => {
         const targetAccount = getTargetAccount(entityTypeId);
         const name = faker.lorem.word();
-        const url = faker.internet.url();
+        const url = fakeIpfsUri();
         await instance
           .connect(govAccount)
           .add(entityTypeId, targetAccount.address, name, url);
@@ -150,7 +185,7 @@ describe("Government management", async () => {
       it(`Should grant role, change state, and emit event`, async () => {
         const targetAccount = getTargetAccount(entityTypeId);
         const name = faker.lorem.word();
-        const url = faker.internet.url();
+        const url = fakeIpfsUri();
         await instance
           .connect(govAccount)
           .add(entityTypeId, targetAccount.address, name, url);

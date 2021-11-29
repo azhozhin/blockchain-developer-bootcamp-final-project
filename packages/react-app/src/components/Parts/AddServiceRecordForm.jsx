@@ -39,7 +39,8 @@ export default function AddServiceRecordForm({ visible, setVisible, vehicleDetai
       "d91c1c142f067b652a0c",
       "868e2bdeebb78dd531969872283050ceeda15a72f78cef991150dac03daac740",
     );
-    const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
+    // we need to use proper IPFS link as it is enforced by smart contract
+    const metadataUri = "ipfs://" + data.IpfsHash;
     try {
       const tokenId = BigInt(vehicleDetails.tokenId);
       const mileage = parseInt(fields.mileage);

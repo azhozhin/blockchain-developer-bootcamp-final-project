@@ -81,6 +81,7 @@ export default function Home({
             roles={roles}
             localProvider={localProvider}
             mainnetProvider={mainnetProvider}
+            pinataApi={pinataApi}
           />
         </TabPane>
         <TabPane tab="Manufacturers" key="manufacturers">

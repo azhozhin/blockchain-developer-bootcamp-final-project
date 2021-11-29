@@ -16,7 +16,7 @@ const incidents = [
   "hit animal crossing the road",
 ];
 
-export default function AddPoliceDepartmentForm({ visible, setVisible, writeContracts, pinataApi, tx }) {
+export default function AddPoliceDepartmentForm({ visible, setVisible, writeContracts, pinataApi, tx, setRefreshTrigger }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -28,12 +28,14 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, writeCont
     fields.imageUri = fileList[0].originFileObj.url;
     const [obj, jsonName] = serializePoliceDepartmentMetadata(fields);
     const data = await pinataApi.pinJsonToIpfs(obj, jsonName);
-    const metadataUri = "https://ipfs.io/ipfs/" + data.IpfsHash;
+    // we need to use proper IPFS link as it is enforced by smart contract
+    const metadataUri = "ipfs://" + data.IpfsHash;
     try {
       const result = await executeMethod(
         tx,
         writeContracts.VehicleLifecycleToken.add(entityType.POLICE, fields.addr, fields.name, metadataUri),
         () => {
+          setRefreshTrigger(Math.random().toString());
           setVisible(false);
         },
         () => {},

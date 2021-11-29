@@ -4,7 +4,7 @@ import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
 import { deserializeManufacturerMetadata, entityType, executeMethod, loadEntities } from "../../helpers/entityHelper";
 
-export default function Manufacturers({ address, readContracts, writeContracts, roles, tx }) {
+export default function Manufacturers({ address, readContracts, writeContracts, roles, tx, pinataApi }) {
   const [loading, setLoading] = useState(false);
   const [manufacturers, setManufacturers] = useState();
   const [loadingArray, setLoadingArray] = useState({});
@@ -15,7 +15,7 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
       if (readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const newManufacturers = await readContracts.VehicleLifecycleToken.getManufacturers();
-        const [newList, addr2index] = await loadEntities(newManufacturers, deserializeManufacturerMetadata);
+        const [newList, addr2index] = await loadEntities(newManufacturers, deserializeManufacturerMetadata, pinataApi);
 
         setManufacturers(newList);
         setAddr2indexMapping(addr2index);
@@ -107,7 +107,7 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
       key: "metadataUri",
       width: "100px",
       render: uri => (
-        <a target="_blank" rel="noopener noreferrer" href={uri}>
+        <a target="_blank" rel="noopener noreferrer" href={pinataApi.convertToUrl(uri)}>
           ipfs
         </a>
       ),

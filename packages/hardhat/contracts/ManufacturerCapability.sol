@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity =0.8.10;
 
 /// @title Manufacturer Capabilty
 /// @author Andrei Zhozhin
@@ -61,7 +61,7 @@ abstract contract ManufacturerCapability {
         returns (Vehicle memory)
     {
         Vehicle memory vehicle = _tokenId2Vehicle[tokenId];
-        require(vehicle.tokenId != 0, "NF"); // NF = Vehicle does not exist
+        require(vehicle.tokenId != 0, "Not Found"); // NF = Vehicle does not exist
         return vehicle;
     }
 
@@ -74,7 +74,7 @@ abstract contract ManufacturerCapability {
         returns (Vehicle memory)
     {
         uint256 tokenId = _vin2TokenId[vin];
-        require(tokenId != 0, "NF"); // NF = Vehicle does not exist
+        require(tokenId != 0, "Not Found"); // NF = Vehicle does not exist
         return getVehicleDetailsByTokenId(tokenId);
     }
 }

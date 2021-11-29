@@ -8,6 +8,7 @@ const {
   manufactureVehicle,
   errorMessages,
   entityType,
+  fakeIpfsUri,
 } = require("./testHelpers");
 
 use(solidity);
@@ -44,7 +45,7 @@ describe("Service Factory Capability", () => {
         entityType.MANUFACTURER,
         manufacturerAccount.address,
         faker.lorem.word(),
-        faker.internet.url()
+        fakeIpfsUri()
       );
 
     await instance
@@ -53,7 +54,7 @@ describe("Service Factory Capability", () => {
         entityType.SERVICE_FACTORY,
         serviceFactoryAccount.address,
         faker.lorem.word(),
-        faker.internet.url()
+        fakeIpfsUri()
       );
 
     await manufactureVehicle(instance, manufacturerAccount, createVehicle());
@@ -63,7 +64,7 @@ describe("Service Factory Capability", () => {
     it("Should add new entry with all parameters to storage", async () => {
       const logEntriesBefore = await instance.getServiceLogEntries(1);
       expect(logEntriesBefore.length).to.be.equal(0);
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       const mileage = faker.datatype.number({
         min: 2000,
         max: 20000,
@@ -89,7 +90,7 @@ describe("Service Factory Capability", () => {
 
     it("Should not allow to add new entry for disabled service factory", async () => {
       const mileage = faker.datatype.number();
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       await instance
         .connect(govAccount)
         .disable(entityType.SERVICE_FACTORY, serviceFactoryAccount.address);
@@ -103,7 +104,7 @@ describe("Service Factory Capability", () => {
 
     it("Should be allowed to add new entry for disabled and enabled again service factory", async () => {
       const mileage = faker.datatype.number();
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       await instance
         .connect(govAccount)
         .disable(entityType.SERVICE_FACTORY, serviceFactoryAccount.address);
@@ -119,7 +120,7 @@ describe("Service Factory Capability", () => {
     });
 
     it("Should be not allowed to add service log entries without permissions", async () => {
-      const recordUri = faker.internet.url();
+      const recordUri = fakeIpfsUri();
       const mileage = faker.datatype.number();
       // Act
       await expect(

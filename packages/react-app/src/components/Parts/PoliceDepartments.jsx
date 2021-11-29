@@ -17,21 +17,23 @@ export default function PoliceDepartments({ address, readContracts, writeContrac
   const [addr2indexMapping, setAddr2indexMapping] = useState({});
 
   const [addPoliceDepartmentFormVisible, setAddPoliceDepartmentFormVisible] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState("");
 
   useEffect(() => {
     async function getPoliceDepartments() {
       if (readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const newPoliceDepartments = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
-        const [newList, addr2index] = await loadEntities(newPoliceDepartments, deserializePoliceDepartmentMetadata);
+        const [newList, addr2index] = await loadEntities(newPoliceDepartments, deserializePoliceDepartmentMetadata, pinataApi);
 
         setPoliceDepartments(newList);
         setAddr2indexMapping(addr2index);
         setLoading(false);
+        console.log(newList);
       }
     }
     getPoliceDepartments();
-  }, [address]);
+  }, [address, refreshTrigger]);
 
   const onPoliceDepartmentChangeState = async record => {
     setLoadingArray(prevState => ({
@@ -127,7 +129,7 @@ export default function PoliceDepartments({ address, readContracts, writeContrac
       key: "metadataUri",
       width: "100px",
       render: uri => (
-        <a target="_blank" rel="noopener noreferrer" href={uri}>
+        <a target="_blank" rel="noopener noreferrer" href={pinataApi.convertToUrl(uri)}>
           ipfs
         </a>
       ),
@@ -159,6 +161,7 @@ export default function PoliceDepartments({ address, readContracts, writeContrac
         setVisible={setAddPoliceDepartmentFormVisible}
         pinataApi={pinataApi}
         writeContracts={writeContracts}
+        setRefreshTrigger={setRefreshTrigger}
       />
     </>
   );

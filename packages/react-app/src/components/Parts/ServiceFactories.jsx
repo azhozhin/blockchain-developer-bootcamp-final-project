@@ -4,7 +4,7 @@ import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
 import { deserializeServiceFactoryMetadata, entityType, executeMethod, loadEntities } from "../../helpers/entityHelper";
 
-export default function ServiceFactories({ address, readContracts, writeContracts, tx, roles }) {
+export default function ServiceFactories({ address, readContracts, writeContracts, tx, roles, pinataApi }) {
   const [serviceFactories, setServiceFactories] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingArray, setLoadingArray] = useState({});
@@ -15,7 +15,7 @@ export default function ServiceFactories({ address, readContracts, writeContract
       if (roles && readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const newServiceFactories = await readContracts.VehicleLifecycleToken.getServiceFactories();
-        const [newList, addr2index] = await loadEntities(newServiceFactories, deserializeServiceFactoryMetadata);
+        const [newList, addr2index] = await loadEntities(newServiceFactories, deserializeServiceFactoryMetadata, pinataApi);
 
         setServiceFactories(newList);
         setAddr2indexMapping(addr2index);
@@ -119,7 +119,7 @@ export default function ServiceFactories({ address, readContracts, writeContract
       key: "metadataUri",
       width: "100px",
       render: uri => (
-        <a target="_blank" rel="noopener noreferrer" href={uri}>
+        <a target="_blank" rel="noopener noreferrer" href={pinataApi.convertToUrl(uri)}>
           ipfs
         </a>
       ),

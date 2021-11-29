@@ -2,7 +2,7 @@ import { Table } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function PoliceRecords({ tokenId, readContracts, refreshTrigger }) {
+export default function PoliceRecords({ tokenId, readContracts, refreshTrigger, pinataApi }) {
   const [loading, setLoading] = useState(false);
   const [policeDepartmentMap, setPoliceDepartmentMap] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -26,7 +26,7 @@ export default function PoliceRecords({ tokenId, readContracts, refreshTrigger }
         const policeLogs = [];
         for (const log of rawPoliceLogs) {
           const timestamp = log.timestamp;
-          const recordUri = log.recordUri;
+          const recordUri = pinataApi.convertToUrl(log.recordUri);
           const recordResp = await axios.get(recordUri);
           const record = recordResp.data;
           policeLogs.push({

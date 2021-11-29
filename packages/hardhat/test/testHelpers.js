@@ -1,4 +1,5 @@
 const faker = require("faker");
+const bs58 = require("bs58");
 
 const entityType = {
   UNDEFINED: 0,
@@ -13,11 +14,19 @@ const entityState = {
 };
 
 const errorMessages = {
-  NOT_ALLOWED: "NA",
-  NOT_FOUND: "NF",
+  NOT_ALLOWED: "Not Allowed",
+  NOT_FOUND: "Not Found",
+  ALREADY_EXISTS: "Entity already exists",
+  NOT_UNIQUE_VIN: "VIN is not unique",
+  NON_IPFS_TOKEN_URI: "TokenUri should start with ipfs://",
+  NON_IPFS_METADATA_URI: "MetadataUri should start with ipfs://",
 };
 
-const createVehicle = (vin = undefined) => {
+const fakeIpfsUri = () => {
+  return "ipfs://" + bs58.encode(Buffer.from(faker.internet.url()));
+};
+
+const createVehicle = (vin = undefined, tokenUri = undefined) => {
   return {
     vin: vin ? vin : faker.vehicle.vin(),
     make: faker.vehicle.manufacturer(),
@@ -38,7 +47,7 @@ const createVehicle = (vin = undefined) => {
       max: 4000,
       precision: 100,
     }),
-    tokenUri: faker.internet.url(),
+    tokenUri: tokenUri ? tokenUri : fakeIpfsUri(),
   };
 };
 
@@ -63,4 +72,5 @@ module.exports = {
   errorMessages,
   createVehicle,
   manufactureVehicle,
+  fakeIpfsUri,
 };
