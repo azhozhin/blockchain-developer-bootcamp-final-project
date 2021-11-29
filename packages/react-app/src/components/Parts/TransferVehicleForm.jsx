@@ -26,10 +26,9 @@ export default function TransferVehicleForm({
       const result = await executeMethod(
         tx,
         writeContracts.VehicleLifecycleToken.transferFrom(fromAddr, toAddr, tokenId),
-        () => {
-          setRefreshTrigger(Math.random().toString());
-        },
+        () => {},
       );
+      setRefreshTrigger(Math.random().toString());
       setVisible(false);
       form.resetFields();
     } catch (e) {

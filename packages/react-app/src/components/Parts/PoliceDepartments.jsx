@@ -33,7 +33,6 @@ export default function PoliceDepartments({ address, readContracts, writeContrac
         setPoliceDepartments(newList);
         setAddr2indexMapping(addr2index);
         setLoading(false);
-        console.log(newList);
       }
     }
     getPoliceDepartments();

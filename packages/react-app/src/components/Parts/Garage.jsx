@@ -12,26 +12,28 @@ export default function Garage({ address, readContracts, writeContracts, handleC
 
   const [refreshTrigger, setRefreshTrigger] = useState("");
 
-  // useEffect(() => {
-  //   setLoading(true);
-  // }, []);
+  async function LoadMyVehicles() {
+    if (readContracts && readContracts.VehicleLifecycleToken) {
+      setLoading(true);
+      const count = await readContracts.VehicleLifecycleToken.balanceOf(address);
+      console.log("count: " + count);
+      const localVehicles = [];
+      // todo: query it in parallel
+      for (let i = 0; i < count; i++) {
+        const tokenId = await readContracts.VehicleLifecycleToken.tokenOfOwnerByIndex(address, BigInt(i));
+        const vehicle = await readContracts.VehicleLifecycleToken.getVehicleDetailsByTokenId(tokenId);
+        localVehicles.push(vehicle);
+      }
+      setLoading(false);
+      setVehicles(localVehicles);
+    }
+  }
 
   useEffect(() => {
-    async function LoadMyVehicles() {
-      if (readContracts && readContracts.VehicleLifecycleToken) {
-        setLoading(true);
-        const count = await readContracts.VehicleLifecycleToken.balanceOf(address);
-        const localVehicles = [];
-        // todo: query it in parallel
-        for (let i = 0; i < count; i++) {
-          const tokenId = await readContracts.VehicleLifecycleToken.tokenOfOwnerByIndex(address, BigInt(i));
-          const vehicle = await readContracts.VehicleLifecycleToken.getVehicleDetailsByTokenId(tokenId);
-          localVehicles.push(vehicle);
-        }
-        setLoading(false);
-        setVehicles(localVehicles);
-      }
-    }
+    LoadMyVehicles();
+  }, [readContracts]);
+
+  useEffect(() => {
     LoadMyVehicles();
   }, [address, refreshTrigger]);
 

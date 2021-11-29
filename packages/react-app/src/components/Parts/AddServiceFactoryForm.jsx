@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Input, Upload } from "antd";
 
-export default function AddServiceFactoryForm({ visible, setVisible, writeContracts, pinataApi, tx, setRefreshTrigger }) {
+export default function AddServiceFactoryForm({
+  visible,
+  setVisible,
+  writeContracts,
+  pinataApi,
+  tx,
+  setRefreshTrigger,
+}) {
   const handleOk = async () => {
     setVisible(false);
     setRefreshTrigger(Math.random().toString());
