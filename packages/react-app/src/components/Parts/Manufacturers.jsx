@@ -30,6 +30,7 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
   }, [address, refreshTrigger]);
 
   const onManufacturerChangeState = async record => {
+    console.log("START");
     setLoadingArray(prevState => ({
       ...prevState,
       [record.addr]: true,
@@ -40,10 +41,12 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
         ? writeContracts.VehicleLifecycleToken.disable(entityType.MANUFACTURER, record.addr)
         : writeContracts.VehicleLifecycleToken.enable(entityType.MANUFACTURER, record.addr),
       () => {
+        console.log("AAAA");
         const idx = addr2indexMapping[record.addr];
         const newManufacturers = [...manufacturers];
         newManufacturers[idx] = { ...newManufacturers[idx], state: record.state == 1 ? 0 : 1 };
         setManufacturers(newManufacturers);
+        console.log("BBBB");
         setLoadingArray(prevState => ({
           ...prevState,
           [record.addr]: false,
@@ -56,6 +59,8 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
         }));
       },
     );
+
+    console.log("CCCC");
   };
 
   const columns = [

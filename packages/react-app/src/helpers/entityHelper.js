@@ -11,10 +11,12 @@ export const entityType = {
 export const executeMethod = async (tx, fun, onSuccess, onError) => {
   const result = tx(fun, update => {
     console.log("📡 Transaction Update:", update);
-    if (update && (update.status === "confirmed" || update.status === 1)) {
-      onSuccess && onSuccess(update);
-    } else {
-      onError && onError(update);
+    if (update) {
+      if (update.status === "confirmed" || update.status === 1) {
+        onSuccess && onSuccess(update);
+      } else if (update.status === "failed" || update.code == 4001) {
+        onError && onError(update);
+      }
     }
   });
   //console.log("awaiting metamask/web3 confirm result...", result);
