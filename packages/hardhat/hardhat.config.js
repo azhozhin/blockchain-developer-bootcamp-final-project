@@ -130,7 +130,7 @@ module.exports = {
     },
     ropsten: {
       url: "https://ropsten.infura.io/v3/7f0b324e05ae4d5491b9b3343dd98def", // <---- YOUR INFURA ID! (or it won't work)
-
+      gasPrice: 10*1000000000,
       //      url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXXXX/eth/ropsten",// <---- YOUR MORALIS ID! (not limited to infura)
 
       accounts: {
