@@ -22,6 +22,11 @@ It provides multiple benefits for all parties that are participating in lifecycl
 
 ![use cases](docs/images/use-cases.png)
 
+## Deployed contract
+
+You can check deployed contract on Ropsten testnet:
+[0xbe5a19a8a400b9c8bde1f534ea92ace4e58231d2](https://ropsten.etherscan.io/address/0xbe5a19a8a400b9c8bde1f534ea92ace4e58231d2)
+
 ## Folder structure
 
 Here is a list of important folders and their description.

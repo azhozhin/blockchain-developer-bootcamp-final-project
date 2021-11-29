@@ -12,9 +12,9 @@ export default function Garage({ address, readContracts, writeContracts, handleC
 
   const [refreshTrigger, setRefreshTrigger] = useState("");
 
-  useEffect(() => {
-    //setLoading(true);
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  // }, []);
 
   useEffect(() => {
     async function LoadMyVehicles() {

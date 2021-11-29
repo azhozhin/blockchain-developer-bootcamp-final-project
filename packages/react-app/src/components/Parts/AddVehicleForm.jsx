@@ -92,9 +92,9 @@ export default function AddVehicleForm({
         ),
         () => {
           setRefreshTrigger(Math.random().toString());
+          setVisible(false);
         },
       );
-      setVisible(false);
       form.resetFields();
       setFileList([]);
     } catch (e) {
