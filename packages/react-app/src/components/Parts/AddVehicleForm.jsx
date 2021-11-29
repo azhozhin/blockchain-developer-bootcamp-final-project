@@ -10,7 +10,16 @@ const { TextArea } = Input;
 // this have only Porsche & Kia
 const fakeVehicleDatabaseUri = "https://ipfs.io/api/v0/ls/Qmbet8GLLkEAtcwr8A7pFDT9ZQqsXiEgEkZb6nL4PXpNm8";
 
-export default function AddVehicleForm({ readContracts, writeContracts, tx, pinataApi, visible, setVisible, address }) {
+export default function AddVehicleForm({
+  setRefreshTrigger,
+  readContracts,
+  writeContracts,
+  tx,
+  pinataApi,
+  visible,
+  setVisible,
+  address,
+}) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -80,6 +89,9 @@ export default function AddVehicleForm({ readContracts, writeContracts, tx, pina
           fields.engineSize,
           metadataUri,
         ),
+        () => {
+          setRefreshTrigger(Math.random().toString());
+        },
       );
       setVisible(false);
       form.resetFields();

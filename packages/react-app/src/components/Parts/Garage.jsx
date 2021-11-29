@@ -10,13 +10,15 @@ export default function Garage({ address, readContracts, writeContracts, handleC
   const [addNewVehicleFormVisible, setAddNewVehicleFormVisible] = useState(false);
   const [transferVehicleFormVisible, setTransferVehicleFormVisible] = useState(false);
 
+  const [refreshTrigger, setRefreshTrigger] = useState("");
+
   useEffect(() => {
     //setLoading(true);
   }, []);
 
   useEffect(() => {
     async function LoadMyVehicles() {
-      if (address && readContracts && readContracts.VehicleLifecycleToken) {
+      if (readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const count = await readContracts.VehicleLifecycleToken.balanceOf(address);
         const localVehicles = [];
@@ -29,10 +31,9 @@ export default function Garage({ address, readContracts, writeContracts, handleC
         setLoading(false);
         setVehicles(localVehicles);
       }
-      //
     }
     LoadMyVehicles();
-  }, [address, readContracts, addNewVehicleFormVisible, transferVehicleFormVisible]);
+  }, [address, refreshTrigger]);
 
   const onTokenIdClick = (event, tokenId) => {
     handleChange(tokenId);
@@ -120,6 +121,7 @@ export default function Garage({ address, readContracts, writeContracts, handleC
         readContracts={readContracts}
         writeContracts={writeContracts}
         tx={tx}
+        setRefreshTrigger={setRefreshTrigger}
       />
       <TransferVehicleForm
         address={address}
@@ -129,6 +131,7 @@ export default function Garage({ address, readContracts, writeContracts, handleC
         writeContracts={writeContracts}
         tokenId={selectedTokenId}
         tx={tx}
+        setRefreshTrigger={setRefreshTrigger}
       />
     </>
   );

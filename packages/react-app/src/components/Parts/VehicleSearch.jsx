@@ -63,6 +63,7 @@ export default function VehicleSearch({ readContracts, handleChange }) {
       setData([]);
     }
   };
+
   const onChange = value => {
     setSearchMode(value);
   };
@@ -123,11 +124,17 @@ export default function VehicleSearch({ readContracts, handleChange }) {
   ];
 
   const selectBefore = (
-    <Select defaultValue="vin" className="select-before" onChange={onChange} style={{ width: "100px" }}>
+    <Select defaultValue="tokenId" className="select-before" onChange={onChange} style={{ width: "100px" }}>
       <Option value="vin">vin</Option>
       <Option value="tokenId">tokenId</Option>
     </Select>
   );
+
+  const onFill = async () => {
+    console.log("hi");
+    const totalSupply = await readContracts.VehicleLifecycleToken.totalSupply;
+    console.log(totalSupply);
+  };
 
   return (
     <>
@@ -139,6 +146,9 @@ export default function VehicleSearch({ readContracts, handleChange }) {
         size="large"
         onSearch={onSearch}
       />
+      <Button key="fillForm" type="link" htmlType="button" onClick={onFill}>
+        Show All
+      </Button>
       <Divider />
       <Table rowKey={record => record.tokenId} columns={columns} dataSource={data} loading={loading} />
     </>
