@@ -143,6 +143,7 @@ export default function Vehicle({
                 setVisible={setAddPoliceRecordVisible}
                 vehicleDetails={data}
                 writeContracts={writeContracts}
+                pinataApi={pinataApi}
               />
             </Col>
           </Row>

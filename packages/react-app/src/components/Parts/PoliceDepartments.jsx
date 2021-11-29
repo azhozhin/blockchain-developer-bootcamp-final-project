@@ -24,7 +24,11 @@ export default function PoliceDepartments({ address, readContracts, writeContrac
       if (readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const newPoliceDepartments = await readContracts.VehicleLifecycleToken.getPoliceDepartments();
-        const [newList, addr2index] = await loadEntities(newPoliceDepartments, deserializePoliceDepartmentMetadata, pinataApi);
+        const [newList, addr2index] = await loadEntities(
+          newPoliceDepartments,
+          deserializePoliceDepartmentMetadata,
+          pinataApi,
+        );
 
         setPoliceDepartments(newList);
         setAddr2indexMapping(addr2index);

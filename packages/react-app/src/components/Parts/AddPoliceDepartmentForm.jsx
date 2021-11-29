@@ -8,15 +8,14 @@ import { AddressInput } from "..";
 import faker from "faker";
 import { entityType, executeMethod, serializePoliceDepartmentMetadata } from "../../helpers/entityHelper";
 
-const incidents = [
-  "hit road divider",
-  "hit road sign",
-  "hit another car",
-  "fall off bridge",
-  "hit animal crossing the road",
-];
-
-export default function AddPoliceDepartmentForm({ visible, setVisible, writeContracts, pinataApi, tx, setRefreshTrigger }) {
+export default function AddPoliceDepartmentForm({
+  visible,
+  setVisible,
+  writeContracts,
+  pinataApi,
+  tx,
+  setRefreshTrigger,
+}) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -54,7 +53,6 @@ export default function AddPoliceDepartmentForm({ visible, setVisible, writeCont
   };
 
   const onFill = () => {
-    const rndIdx = Math.floor(Math.random() * incidents.length);
     const cityName = faker.address.cityName();
     form.setFieldsValue({
       name: cityName + " Police Department",

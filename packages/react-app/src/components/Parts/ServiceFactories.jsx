@@ -3,6 +3,7 @@ import { Address } from "..";
 import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
 import { deserializeServiceFactoryMetadata, entityType, executeMethod, loadEntities } from "../../helpers/entityHelper";
+import AddServiceFactoryForm from "./AddServiceFactoryForm";
 
 export default function ServiceFactories({ address, readContracts, writeContracts, tx, roles, pinataApi }) {
   const [serviceFactories, setServiceFactories] = useState();
@@ -10,12 +11,19 @@ export default function ServiceFactories({ address, readContracts, writeContract
   const [loadingArray, setLoadingArray] = useState({});
   const [addr2indexMapping, setAddr2indexMapping] = useState({});
 
+  const [addServiceFactoryFormVisible, setAddServiceFactoryFormVisible] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState("");
+
   useEffect(() => {
     async function getServiceFactories() {
       if (roles && readContracts && readContracts.VehicleLifecycleToken) {
         setLoading(true);
         const newServiceFactories = await readContracts.VehicleLifecycleToken.getServiceFactories();
-        const [newList, addr2index] = await loadEntities(newServiceFactories, deserializeServiceFactoryMetadata, pinataApi);
+        const [newList, addr2index] = await loadEntities(
+          newServiceFactories,
+          deserializeServiceFactoryMetadata,
+          pinataApi,
+        );
 
         setServiceFactories(newList);
         setAddr2indexMapping(addr2index);
@@ -23,7 +31,7 @@ export default function ServiceFactories({ address, readContracts, writeContract
       }
     }
     getServiceFactories();
-  }, [address]);
+  }, [address, refreshTrigger]);
 
   const onServiceFactoryChangeState = async record => {
     setLoadingArray(prevState => ({
@@ -125,14 +133,27 @@ export default function ServiceFactories({ address, readContracts, writeContract
       ),
     },
   ];
+
+  const showAddServiceFactoryForm = () => {
+    setAddServiceFactoryFormVisible(true);
+  };
+
   return (
     <>
       <div>
         <Table rowKey={record => record.addr} dataSource={serviceFactories} columns={columns} loading={loading} />
       </div>
-      <Button type="primary" disabled={!roles.isGovernment} loading={loading}>
+      <Button type="primary" disabled={!roles.isGovernment} loading={loading} onClick={showAddServiceFactoryForm}>
         Add Service Factory
       </Button>
+      <AddServiceFactoryForm
+        tx={tx}
+        visible={addServiceFactoryFormVisible}
+        setVisible={setAddServiceFactoryFormVisible}
+        pinataApi={pinataApi}
+        writeContracts={writeContracts}
+        setRefreshTrigger={setRefreshTrigger}
+      />
     </>
   );
 }

@@ -86,7 +86,10 @@ abstract contract EntityManagement {
     ) internal returns (uint256) {
         Entity memory entity = entityMap[addr];
         require(entity.addr == address(0), "Entity already exists");
-        require(startsWith(toSlice(metadataUri), toSlice("ipfs://")), "MetadataUri should start with ipfs://");
+        require(
+            startsWith(toSlice(metadataUri), toSlice("ipfs://")),
+            "MetadataUri should start with ipfs://"
+        );
         entityMap[addr] = Entity(addr, name, State.ACTIVE, metadataUri);
         entityIndex2Addr[count] = addr;
         count++;
@@ -126,6 +129,7 @@ abstract contract EntityManagement {
         emit EntityResumed(type_, addr, entity.name);
     }
 
+    // TODO: The following methods are taken from https://modex.tech/developers/idiana96/solidity-stringutils should be properly referenced as library
     struct slice {
         uint256 _len;
         uint256 _ptr;
@@ -137,7 +141,7 @@ abstract contract EntityManagement {
      * @return A newly allocated slice containing the entire string.
      */
     function toSlice(string memory self) internal pure returns (slice memory) {
-        uint ptr;
+        uint256 ptr;
         assembly {
             ptr := add(self, 0x20)
         }

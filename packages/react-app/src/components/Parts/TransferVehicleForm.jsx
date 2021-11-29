@@ -11,7 +11,7 @@ export default function TransferVehicleForm({
   writeContracts,
   tokenId,
   tx,
-  setRefreshTrigger
+  setRefreshTrigger,
 }) {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -26,9 +26,9 @@ export default function TransferVehicleForm({
       const result = await executeMethod(
         tx,
         writeContracts.VehicleLifecycleToken.transferFrom(fromAddr, toAddr, tokenId),
-        ()=>{
+        () => {
           setRefreshTrigger(Math.random().toString());
-        }
+        },
       );
       setVisible(false);
       form.resetFields();

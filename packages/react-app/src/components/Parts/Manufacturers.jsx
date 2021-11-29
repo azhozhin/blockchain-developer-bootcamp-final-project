@@ -3,12 +3,16 @@ import { Address } from "..";
 import { Table, Image, Button } from "antd";
 import EntityState from "../EntityState";
 import { deserializeManufacturerMetadata, entityType, executeMethod, loadEntities } from "../../helpers/entityHelper";
+import AddManufacturerForm from "./AddManufacturerForm";
 
 export default function Manufacturers({ address, readContracts, writeContracts, roles, tx, pinataApi }) {
   const [loading, setLoading] = useState(false);
   const [manufacturers, setManufacturers] = useState();
   const [loadingArray, setLoadingArray] = useState({});
   const [addr2indexMapping, setAddr2indexMapping] = useState({});
+
+  const [addManufacturerFormVisible, setAddManufacturerFormVisible] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState("");
 
   useEffect(() => {
     async function getManufacturers() {
@@ -23,7 +27,7 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
       }
     }
     getManufacturers();
-  }, [address]);
+  }, [address, refreshTrigger]);
 
   const onManufacturerChangeState = async record => {
     setLoadingArray(prevState => ({
@@ -113,6 +117,11 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
       ),
     },
   ];
+
+  const showAddManufacturerForm = () => {
+    setAddManufacturerFormVisible(true);
+  };
+
   return (
     <>
       {manufacturers && (
@@ -120,9 +129,17 @@ export default function Manufacturers({ address, readContracts, writeContracts, 
           <Table rowKey={record => record.addr} dataSource={manufacturers} columns={columns} loading={loading} />
         </div>
       )}
-      <Button type="primary" disabled={!roles.isGovernment} loading={loading}>
+      <Button type="primary" disabled={!roles.isGovernment} loading={loading} onClick={showAddManufacturerForm}>
         Add Manufacturer
       </Button>
+      <AddManufacturerForm
+        tx={tx}
+        visible={addManufacturerFormVisible}
+        setVisible={setAddManufacturerFormVisible}
+        pinataApi={pinataApi}
+        writeContracts={writeContracts}
+        setRefreshTrigger={setRefreshTrigger}
+      />
     </>
   );
 }

@@ -29,10 +29,7 @@ export default function AddPoliceRecordForm({ visible, setVisible, vehicleDetail
       details: fields.details,
     };
     const name = "policeRecord-" + fields.vin;
-    const data = await pinataApi.pinJsonToIpfs(
-      obj,
-      name
-    );
+    const data = await pinataApi.pinJsonToIpfs(obj, name);
     // we need to use proper IPFS link as it is enforced by smart contract
     const metadataUri = "ipfs://" + data.IpfsHash;
     try {
