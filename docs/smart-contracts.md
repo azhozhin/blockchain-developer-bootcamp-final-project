@@ -23,6 +23,10 @@ Please note that there is no `GovernmentCapability.sol` - Government is only reg
 
 To optimize contract size in future all `*Capabilities` could be converted to separate contracts, so main contract would delegate calls to capability contracts.
 
+## Smart contract class diagram
+
+![Class diagram](images/class-diagram.png)
+
 ## Design patterns
 
 There are several design patterns used in this project:
