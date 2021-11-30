@@ -31,7 +31,7 @@ export default function Garage({ address, readContracts, writeContracts, handleC
 
   useEffect(() => {
     LoadMyVehicles();
-  }, [readContracts]);
+  }, []);
 
   useEffect(() => {
     LoadMyVehicles();
