@@ -156,18 +156,23 @@ yarn ipfs
 In the end you would see destination address in console output, like the following:
 
 ```bash
-TBD
+🛰  Sending to IPFS...
+📡 App deployed to IPFS with hash: QmcKXUATLnKyozrN61jbcT195ipf9aUQFTcuPmWN8SWhPG
+
+🚀 Deployment to IPFS complete!
+
+Use the link below to access your app:
+   IPFS: https://ipfs.io/ipfs/QmcKXUATLnKyozrN61jbcT195ipf9aUQFTcuPmWN8SWhPG
+
 ```
 
 It is good idea to pin this url in pinata to make sure it would not disappear randomly.
 
-## 3rd Party resources
+## 3rd party resources
 
 - Image database (The car connection) [picture-scraper](https://github.com/nicolas-gervais/predicting-car-price-from-scraped-data/tree/master/picture-scraper)
 
-## Technologies
-
-## Services
+## 3rd party services
 
 - [pinata.cloud](http://pinata.cloud) - IPFS gateway
-- [alchemy](alchemy.com) - Etherium network http gateway
+- [infura](http://infura.io) - Ethereum network http gateway
