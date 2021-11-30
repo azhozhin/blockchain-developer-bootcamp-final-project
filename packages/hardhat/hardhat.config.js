@@ -27,7 +27,8 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 //
 // Select the network you want to deploy to here:
 //
-const defaultNetwork = "ropsten";
+// const defaultNetwork = "ropsten";
+const defaultNetwork = "localhost";
 
 const mainnetGwei = 21;
 
