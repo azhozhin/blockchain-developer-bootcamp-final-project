@@ -49,8 +49,22 @@ All details about Smart contracts could be found in [Smart Contracts](docs/smart
 
 ## Deployed application
 
-Please make sure you have selected `Ropsten` testnet before navigating.
-Link: [ipfs](https://ipfs.io/ipfs/QmcKXUATLnKyozrN61jbcT195ipf9aUQFTcuPmWN8SWhPG)
+Please make sure you have selected `Ropsten` testnet before navigating. 
+Check browser console if you see nothing (if you don't select proper network you will see errors):
+
+```js
+Uncaught (in promise) ReferenceError: NETWORK is not defined
+    at Je (main.4df264c4.chunk.js:1)
+...
+    at t.unstable_runWithPriority (2.1ce127e2.chunk.js:2)
+```
+
+Application is deployed to IPFS, so first time load could take some time.
+
+- [https://bafybeifmu7uey7hkqyc4iaxcntiyem57lbglgstbzmdkd6uwq5xnwjj3um.ipfs.dweb.link](https://bafybeifmu7uey7hkqyc4iaxcntiyem57lbglgstbzmdkd6uwq5xnwjj3um.ipfs.dweb.link/) - **primary link**
+- [http://vlt.zhozhin.com/](http://vlt.zhozhin.com/) - S3 fallback (in case IPFS would not work by some reason)
+
+Please use Brave or Chrome browser, it does not work in Firefox/Safari.
 
 ## Folder structure
 
