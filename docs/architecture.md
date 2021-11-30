@@ -15,6 +15,17 @@ Ethereum blockchain allow distributed and controlled environment to store import
 
 Due to expense of the blockchain storage it was decided to move everything else off-chain and store in immutable way on IPFS to avoid data loss and eliminate possibility of forgery. So smart contract is enforcing that all references to external storage should be **IPFS links**.
 
+## Main components
+
+![Architecture](images/architecure.png)
+
+1. Application files are loaded from IPFS
+2. Metamask is used to authenticate and authorize user. Wallet address is used to fetch user roles from blockchain using `getRoles(addr)` method
+3. Communication with blockchain is implemented via HTTP gateway. It could be any gateway that supports blockchain RPC
+4. User can upload images for managed entities (Manufacturers/Service Factories/Police Departments), for vehicle (vehicle image), and associated metadata for everything (managed entities, vehicle, police and service log entries)
+
+> All 3rd party services could be replaced with local instances of blockchain full/light client (for blockchain interaction) and ipfs local app (for media/metadata upload and pinning), so there will be no dependencies on 3rd party services and application would have no single point of failure. For this project it is the simplest option to leverage these services to have application without any backend.
+
 ## Implementation details
 
 Current implementation of smart contract have 4 distinct roles:
@@ -62,6 +73,10 @@ Please note that `image` attribute is pointing also to IPFS - this is desirable 
 }
 ```
 
+Joined data view (on-chain/purple and off-chain/green):
+
+![manufacturers data join](images/arch/manufacturers-data-join.png)
+
 ### Service Factories
 
 Example metadata for service factory (stored on IPFS). An `image` attribute is desirable to point to IPFS resource.
@@ -91,6 +106,42 @@ Example metadata for service factory (stored on IPFS). An `image` attribute is d
 
 Please note that it has extra `attributes`.
 
+Joined data view (on-chain/purple and off-chain/green):
+
+![service factory data join](images/arch/service-factory-data-join.png)
+
+### Service log entry
+
+On-chain data:
+
+```javascript
+struct ServiceFactoryLogEntry {
+    uint256 timestamp; // timestamp of entry
+    address principal; // address who made this entry
+    uint32 mileage;    // we would store mileage every time vehicle is services
+    string recordUri;  // to store everything else off-chain
+}
+```
+
+Off-chain metadata (stored on IPFS):
+
+```json
+{
+  "vin": "YH0BDY57XMGE14660",
+  "vehicle": "Porsche Cayenne",
+  "color": "plum",
+  "year": 2017,
+  "mileage": "15000",
+  "datetime": "2021-11-29 00:00:00",
+  "summary": "full service",
+  "details": "Checked lights, tyres, exhaust and operations of brakes and steering"
+}
+```
+
+Joined data view (on-chain/purple and off-chain/green):
+
+![service log data join](images/arch/service-log-data-join.png)
+
 ### Police Departments
 
 Example metadata for police department (stored on IPFS).
@@ -118,4 +169,62 @@ Example metadata for police department (stored on IPFS).
 }
 ```
 
+Joined data view (on-chain/purple and off-chain/green):
+
+![police department data join](images/arch/police-departments-data-join.png)
+
+### Police log entry
+
+On-chain data:
+
+```javascript
+struct PoliceDepartmentLogEntry {
+    uint256 timestamp; // timestamp of entry
+    address principal; // address who make this entry
+    string recordUri;  // to store everything else off-chain
+}
+```
+
+Off-chain data (stored on IPFS):
+
+```json
+{
+  "vin": "YH0BDY57XMGE14660",
+  "vehicle": "Porsche Cayenne",
+  "color": "plum",
+  "year": 2017,
+  "datetime": "2021-11-29 00:00:00",
+  "summary": "The car hit road sign",
+  "details": "Incident Details would go here"
+}
+
+```
+
+Joined data view (on-chain/purple and off-chain/green):
+
+![police log data join](images/arch/police-log-data-join.png)
+
 ### Vehicle
+
+Example metadata for vehicle (stored on IPFS).
+
+```json
+{
+  "name": "Porsche Cayenne",
+  "image": "https://ipfs.io/ipfs/QmUjYW1s68bSBoAnG348HToFRx3vEP8sM3KMVnE6Vd7Dho",
+  "description": "Quod totam eveniet quod vero voluptas quas fugit. Reprehenderit quia quod blanditiis rerum et non. Qui omnis itaque est ratione. Aut et et hic tenetur voluptatem molestiae excepturi iusto. Velit doloremque ratione provident voluptas est.",
+  "external_uri": "",
+  "attributes": [
+    { "attr_type": "make", "value": "Porsche" },
+    { "attr_type": "model", "value": "Cayenne" },
+    { "attr_type": "color", "value": "plum" },
+    { "attr_type": "year", "value": "2017" },
+    { "attr_type": "max_mileage", "value": 104000 },
+    { "attr_type": "engine_size", "value": 3600 }
+  ]
+}
+```
+
+Joined data view (on-chain/purple and off-chain/green):
+
+![vehicle data join](images/arch/vehicle-data-join.png)

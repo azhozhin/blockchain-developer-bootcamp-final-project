@@ -22,14 +22,24 @@ It provides multiple benefits for all parties that are participating in lifecycl
 
 ![use cases](docs/images/use-cases.png)
 
-## Smart contract class diagram
+## Architecure
 
-![class diagram](docs/images/class-diagram.png)
+![architecture](docs/images/architecure.png)
+
+More details could be found in [Architecture](docs/architecture.md) section.
+
+## User interface
+
+![user interface](docs/images/ui/3_vehicle.png)
+
+User interface details could be found in [User interface](docs/user-interface.md) section.
 
 ## Deployed contract
 
 You can check deployed contract on Ropsten testnet:
 [0xbe5a19a8a400b9c8bde1f534ea92ace4e58231d2](https://ropsten.etherscan.io/address/0xbe5a19a8a400b9c8bde1f534ea92ace4e58231d2)
+
+All details about Smart contracts could be found in [Smart Contracts](docs/smart-contracts.md) section.
 
 ## Folder structure
 
@@ -43,17 +53,6 @@ Here is a list of important folders and their description.
 | `packages/react-app`         | FrontEnd                                    |
 | `scripts`                    | Scripts to run things locally               |
 
-## Architecture
-
-- [Solution Architecture](docs/architecture.md)
-
-## Smart contracts
-
-- [Smart Contracts](docs/smart-contracts.md)
-
-## User interface
-
-- [User interface](docs/user-interface.md)
 
 ## Distribution
 
