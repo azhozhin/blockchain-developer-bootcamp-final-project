@@ -53,13 +53,6 @@ Here is a list of important folders and their description.
 | `packages/react-app`         | FrontEnd                                    |
 | `scripts`                    | Scripts to run things locally               |
 
-
-## Distribution
-
-IPFS is used everywhere to store information off-chain. For all entities metadataUri stored on-chain, and file itself is stored on IPFS thus all associated information is protected from forgery as well.
-
-Because data is spread between on-chain and off-chain there should be some logic implemented in UI client that would assemble all pieces and present as full picture to the user. But it is not a mandatory requirement the system could operate with on-chain only data, but in this case user experience would be below expectations.
-
 ## How to run dev env
 
 All commands should be executed from the root of repository.
@@ -83,7 +76,90 @@ yarn deploy
 yarn start
 ```
 
-Open http://localhost:3000 to see the app
+Open [http://localhost:3000](http://localhost:3000) to see the app
+
+## Prepare for testnet/mainnet
+
+### Configure contract deployment
+
+Generate deployer account.
+
+```bash
+yarn generate
+```
+
+It will create file in `packages\hardhat` with mnemonic.
+
+Change destination in `packages\hardhat\hardhat.config.js` (example for `ropsten` testnet):
+
+```javascript
+const defaultNetwork = "ropsten";
+```
+
+Update credentials for deployment in `packages\hardhat\.env` (example for `ropsten` testnet):
+
+```yaml
+# Ropsten
+ROPSTEN_INFURA_KEY=<infura-secret-key>
+ROPSTEN_DEPLOYER_PRIV_KEY=<deployer-private-key>
+```
+
+Deploy to target network
+
+```bash
+yarn deploy
+```
+
+You might need to tweak gas in `packages\hardhat\hardhat.config.js` for your network :
+
+```js
+  networks: {
+...
+    ropsten: {
+      url: "https://ropsten.infura.io/v3/<infura-project-id>", 
+      gasPrice: 10*1000000000, // default gas price might be too low
+      accounts: {
+        mnemonic: mnemonic(),
+      },
+    },
+...
+  }
+```
+
+### Configure front-end app
+
+Example yaml for `ropsten` testnet. You need to create accounts on **infura** and **pinata** and generate api keys.
+
+```yaml
+REACT_APP_PROVIDER=https://ropsten.infura.io/v3/<your-infura-project-id>
+REACT_APP_NETWORK=ropsten
+REACT_APP_PINATA_API_KEY=<pinata-api-key>
+REACT_APP_PINATA_API_SECRET=<pinata-api-secret>
+```
+
+## Deploy front-end to IPFS
+
+The main idea is to have fully distributed application setup, thus it worth to deploy front-end to IPFS
+
+Build production version of react-application
+
+```bash
+yarn build
+```
+
+And deploy it to IPFS
+
+```bash
+yarn ipfs
+```
+
+In the end you would see destination address in console output, like the following:
+
+```bash
+TBD
+```
+
+It is good idea to pin this url in pinata to make sure it would not disappear randomly.
 
 ## 3rd Party resources
 
