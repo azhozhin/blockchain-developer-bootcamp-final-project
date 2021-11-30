@@ -22,6 +22,10 @@ It provides multiple benefits for all parties that are participating in lifecycl
 
 ![use cases](docs/images/use-cases.png)
 
+## Smart contract class diagram
+
+![class diagram](docs/images/class-diagram.png)
+
 ## Deployed contract
 
 You can check deployed contract on Ropsten testnet:

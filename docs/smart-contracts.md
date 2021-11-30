@@ -46,6 +46,8 @@ Ownership is separated from role model.
 
 Owner could be a deployer (or ownership could be transferred to another owner using `transferOwnership` method) and it can assign first `admin` (Government) that can in turn create other participants.
 
+Roles are assigned explicitly for all participants using `setAdmin(addr)` method allowed only for **owner**, or using `add(entityType, addr, name)` allowed for **Government** role.
+
 ## Commentaries
 
 All public methods of smart contracts are documented according to [NatSpec](https://docs.soliditylang.org/en/latest/natspec-format.html).
@@ -62,22 +64,39 @@ yarn test
 
 ## Smart contract Methods
 
+There are 4 different entity types (while only 3 of them are used):
+
+```java
+enum EntityType {
+  UNDEFINED,
+  MANUFACTURER,
+  SERVICE_FACTORY,
+  POLICE
+}
+```
+
 ### Government methods
 
-- a
-- b
+Government authority could control access to the system for 3 types of participants: Manufacturers, Service Factories, Police Departments, see `EntityType`. For every method entity type should be supplied.
+
+- `add(entityType, addr, name, metadataUri)` - add new entity to internal storage and grant appropriate role, `metadataUri` should be IPFS link (enforced)
+- `disable(entityType, addr)` - disable entity and revoke role (it is not deleting entity)
+- `enable(entityType, addr)` - enable entity and grant role
+
+All methods are protected by `role(GOVERNMENT)`.
 
 ### Manufacturer methods
 
-- a
-- b
+- `manufactureVehicle(vin, make, model, color, year, maxMileage, engineSize, tokenUri)` - creates new vehicle using attributes supplied to the function. This method is protected by `role(MANUFACTURER)`
+- `getManufacturers()` - returns list of all manufacturers
+- `getManufacturer(addr)` - return single manufacturer by address
 
 ### Service Factory methods
 
-- a
-- b
+- `addServiceLogEntry(tokenId, mileage, recordUri)` - add new service log entry, `recordUri` should be IPFS link (enforced), method protected by `role(SERVICE_FACTORY)`
+- `getServiceLogEntries(tokenId)` - return list of all service log entries for given tokenId
 
 ### Police Department methods
 
-- a
-- b
+- `addPoliceLogEntry(tokenId, recordUri)` - add new police log record, `recordUri` should be IPFS link (enforced), method protected by `role(POLICE)`
+- `getPoliceLogEntries(tokenId)` - return list of all police log entries for given tokenId
