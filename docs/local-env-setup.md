@@ -5,7 +5,7 @@
 - Node 16.x
 - Yarn 1.22
 - Infura account with API key
-- Pinata account with API key
+- Pinata account with API key (`pinFileToIPS` and `pinJSONToIPFS` access required)
 
 ## How to run dev env
 
@@ -18,7 +18,7 @@ yarn install
 yarn chain
 ```
 
-Please check deployment script and change addresses to yours: `packages/hardhat/deploy/00_deploy_your_contract.js` (all addresses are different in this setup).
+Please check deployment script and change addresses to yours: `packages/hardhat/deploy/00_deploy_your_contract.js` (all addresses are different in this setup, but you can use same address for all roles, but then remove second entries as duplicates are not allowed).
 
 ```js
 {

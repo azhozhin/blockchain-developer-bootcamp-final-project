@@ -47,6 +47,11 @@ You can check deployed contract on Ropsten testnet:
 
 All details about Smart contracts could be found in [Smart Contracts](docs/smart-contracts.md) section.
 
+## Deployed application
+
+Please make sure you have selected `Ropsten` testnet before navigating.
+Link: [ipfs](https://ipfs.io/ipfs/QmcKXUATLnKyozrN61jbcT195ipf9aUQFTcuPmWN8SWhPG)
+
 ## Folder structure
 
 Here is a list of important folders and their description.
