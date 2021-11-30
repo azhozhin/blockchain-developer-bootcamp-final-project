@@ -34,6 +34,12 @@ More details could be found in [Architecture](docs/architecture.md) section.
 
 User interface details could be found in [User interface](docs/user-interface.md) section.
 
+## User interface walkthrough
+
+[![Vehicle lifecycle token walkthrough](https://img.youtube.com/vi/7fIWNWd17cs/0.jpg)](https://www.youtube.com/watch?v=7fIWNWd17cs)
+
+Youtube [link](https://www.youtube.com/watch?v=7fIWNWd17cs)
+
 ## Deployed contract
 
 You can check deployed contract on Ropsten testnet:
@@ -70,6 +76,14 @@ yarn chain
 yarn deploy
 ```
 
+You need to configure pinata api keys, otherwise media/metadata upload to IPFS would not work.
+Update file `packages/react-app/.env`:
+
+```yaml
+REACT_APP_PINATA_API_KEY=<pinata-api-key>
+REACT_APP_PINATA_API_SECRET=<pinata-api-secret>
+```
+
 > in a third terminal window, start your frontend:
 
 ```bash
@@ -77,6 +91,16 @@ yarn start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the app
+
+## Metamask default localhost network would not work
+
+If you select default metamask localhost network you will see the following exception in UI:
+
+![Wrong network local dev](docs/images/wrong-network-local-dev-env.png)
+
+Please make sure you have created new network in metamask as default `localhost 8545` would not work as hardhat network have different chainId and it would not be able to interact with hatdhat local chain.
+
+![New local network in metamask](docs/images/metamask/new-local-network.png)
 
 ## Prepare for testnet/mainnet
 
@@ -129,6 +153,8 @@ You might need to tweak gas in `packages\hardhat\hardhat.config.js` for your net
 ### Configure front-end app
 
 Example yaml for `ropsten` testnet. You need to create accounts on **infura** and **pinata** and generate api keys.
+
+Update file `packages/react-app/.env`:
 
 ```yaml
 REACT_APP_PROVIDER=https://ropsten.infura.io/v3/<your-infura-project-id>
