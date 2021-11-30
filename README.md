@@ -51,202 +51,32 @@ All details about Smart contracts could be found in [Smart Contracts](docs/smart
 
 Here is a list of important folders and their description.
 
-| Folder                       | Description                                 |
-|:-----------------------------|:--------------------------------------------|
-| `data`                       | Example Data for entities & entity metadata |
-| `docs`                       | Documentation files                         |
-| `packages/hardhat/contracts` | Smart contracts                             |
-| `packages/react-app`         | FrontEnd                                    |
-| `scripts`                    | Scripts to run things locally               |
+| Folder                       | Description                                            |
+|:-----------------------------|:-------------------------------------------------------|
+| `data`                       | Example Data for entities & entity metadata            |
+| `docs`                       | Documentation files                                    |
+| `packages/hardhat/contracts` | Smart contracts                                        |
+| `packages/react-app`         | FrontEnd                                               |
+| `scripts`                    | Scripts to run things locally                          |
+| [avoiding_common_attacks.md](avoiding_common_attacks.md)   | Avoiding common attacks  |
+| [design_pattern_decisions.md](design_pattern_decisions.md) | Design pattern decisions |
 
-## How to run dev env
+## Local dev env setup
 
-All commands should be executed from the root of repository.
+Please check instructions here: [Local environment setup](docs/local-env-setup.md)
 
-> in a first terminal window, start your local blockchain:
+## Testnet/mainnet deployment
 
-```bash
-yarn install
-yarn chain
-```
+Please check instructions here: [Testnet deployment](docs/testnet-deployment.md)
 
-Please check deployment script and change addresses to yours: `packages/hardhat/deploy/00_deploy_your_contract.js` (all addresses are different in this setup).
+## Misc
 
-```js
-{
-...
-  // Manufacturers
-  await vehicleLifecycleToken.add(
-    1,
-    "0xDE740E368128Ece3e604dC9db747679A469f0Dd3", 
-    "Porsche",
-    "ipfs://QmRPjEtKnH56T3Khdq4YP6sWWEzHAfWXbnpS4Y9Qz6embE");
-  await vehicleLifecycleToken.add(
-    1,
-    "0xb67EDD32D46ceD740b0F45ccD8408fa87FFA9C05", 
-    "Kia",
-    "ipfs://QmWYVZj53Gyepykg8FQN6i5WHuv1dq8NWKnSefTFkVn77U");
-
-  // Service factories
-  await vehicleLifecycleToken.add(
-    2,
-    "0x3B81e758Bd8163f5db425e7Fba402E18FCc8958D", 
-    "Plaza Kia",
-    "ipfs://QmUzD5MAFYU2LDKSQN5kiTH5xcM2aGLiK4TdS1rFYPcyKv");
-  await vehicleLifecycleToken.add(
-    2,
-    "0x44d5Fb46BcA0bB486836789c40838bd5404834AB",
-    "Manhattan Motorcars",
-    "ipfs://QmWrdYxiA4LkiEuMFdhPy3pUBDHaqQJkFKe152XhVNHrsT");
-
-  // Police Departments
-  await vehicleLifecycleToken.add(
-    3,
-    "0x332b3E20452bD9d89Cf89473111BeA0c052E651a", 
-    "New York City Police Department", 
-    "ipfs://QmUyKBosqz2dzynvCP1qxa4rZrFgf1Z5dCbC7ozJpPrKUE");
-  await vehicleLifecycleToken.add(
-    3,
-    "0x7b25648f9C5aDF7A887Ac451A69F137cde90916E", 
-    "Metropolitan Police Department of the District of Columbia", 
-    "ipfs://QmYy3UjFmCWbgPHvQT2Sxq8BDRynddGFhPc9wtvsHs7vJk");
-    
-  // Admin role and ownership
-  await vehicleLifecycleToken.setAdminRole("0x06199F0B1312DDAD50daCD024a52323c3ff91312");
-  await vehicleLifecycleToken.transferOwnership("0x06199F0B1312DDAD50daCD024a52323c3ff91312");
-...
-}
-```
-
-> in a second terminal window, deploy your contract:
-
-```bash
-yarn deploy
-```
-
-You need to configure pinata api keys, otherwise media/metadata upload to IPFS would not work.
-Update file `packages/react-app/.env`:
-
-```yaml
-REACT_APP_PINATA_API_KEY=<pinata-api-key>
-REACT_APP_PINATA_API_SECRET=<pinata-api-secret>
-```
-
-> in a third terminal window, start your frontend:
-
-```bash
-yarn start
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see the app
-
-## Metamask default localhost network would not work
-
-If you select default metamask localhost network you will see the following exception in UI:
-
-![Wrong network local dev](docs/images/wrong-network-local-dev-env.png)
-
-Please make sure you have created new network in metamask as default `localhost 8545` would not work as hardhat network have different chainId and it would not be able to interact with hatdhat local chain.
-
-![New local network in metamask](docs/images/metamask/new-local-network.png)
-
-## Prepare for testnet/mainnet
-
-### Configure contract deployment
-
-Generate deployer account.
-
-```bash
-yarn generate
-```
-
-It will create file in `packages\hardhat` with mnemonic.
-
-Change destination in `packages\hardhat\hardhat.config.js` (example for `ropsten` testnet):
-
-```javascript
-const defaultNetwork = "ropsten";
-```
-
-Update credentials for deployment in `packages\hardhat\.env` (example for `ropsten` testnet):
-
-```yaml
-# Ropsten
-ROPSTEN_INFURA_KEY=<infura-secret-key>
-ROPSTEN_DEPLOYER_PRIV_KEY=<deployer-private-key>
-```
-
-Deploy to target network
-
-```bash
-yarn deploy
-```
-
-You might need to tweak gas in `packages\hardhat\hardhat.config.js` for your network :
-
-```js
-  networks: {
-...
-    ropsten: {
-      url: "https://ropsten.infura.io/v3/<infura-project-id>", 
-      gasPrice: 10*1000000000, // default gas price might be too low
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-...
-  }
-```
-
-### Configure front-end app
-
-Example yaml for `ropsten` testnet. You need to create accounts on **infura** and **pinata** and generate api keys.
-
-Update file `packages/react-app/.env`:
-
-```yaml
-REACT_APP_PROVIDER=https://ropsten.infura.io/v3/<your-infura-project-id>
-REACT_APP_NETWORK=ropsten
-REACT_APP_PINATA_API_KEY=<pinata-api-key>
-REACT_APP_PINATA_API_SECRET=<pinata-api-secret>
-```
-
-## Deploy front-end to IPFS
-
-The main idea is to have fully distributed application setup, thus it worth to deploy front-end to IPFS
-
-Build production version of react-application
-
-```bash
-yarn build
-```
-
-And deploy it to IPFS
-
-```bash
-yarn ipfs
-```
-
-In the end you would see destination address in console output, like the following:
-
-```bash
-🛰  Sending to IPFS...
-📡 App deployed to IPFS with hash: QmcKXUATLnKyozrN61jbcT195ipf9aUQFTcuPmWN8SWhPG
-
-🚀 Deployment to IPFS complete!
-
-Use the link below to access your app:
-   IPFS: https://ipfs.io/ipfs/QmcKXUATLnKyozrN61jbcT195ipf9aUQFTcuPmWN8SWhPG
-
-```
-
-It is good idea to pin this url in pinata to make sure it would not disappear randomly.
-
-## 3rd party resources
+### 3rd party resources
 
 - Image database (The car connection) [picture-scraper](https://github.com/nicolas-gervais/predicting-car-price-from-scraped-data/tree/master/picture-scraper)
 
-## 3rd party services
+### 3rd party services
 
 - [pinata.cloud](http://pinata.cloud) - IPFS gateway
-- [infura](http://infura.io) - Ethereum network http gateway
+- [infura](http://infura.io) - Ethereum testnet network http gateway
+- [alchemy](http://alchemy.com) - Ethereum mainnet http gateway \[Optional\]
